@@ -28,7 +28,6 @@
 /* ---------- ≥768px — tablets ---------- */
 @media (min-width: 768px) {
   .header-search { display: flex; align-items: center; }
-  .menu-toggle { display: none; }
 
   .level-grid { grid-template-columns: repeat(2, 1fr); }
 
@@ -77,16 +76,12 @@
 }
 .sidebar-overlay.is-open { opacity: 1; pointer-events: auto; }
 
-/* En páginas de tema (dentro de .docs-layout), el sidebar es visible en desktop */
-@media (min-width: 768px) {
-  .docs-layout .sidebar {
-    position: sticky;
-    inset: auto;
-    transform: none;
-    z-index: auto;
-    background: transparent;
+/* El sidebar es off-canvas en todos los tamaños (se abre con el menú hamburguesa) */
+@media (min-width: 992px) {
+  .sidebar {
+    width: 320px;
+    right: auto;
   }
-  .docs-layout .sidebar-overlay { display: none; }
 }
 
 
