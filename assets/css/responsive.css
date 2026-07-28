@@ -87,6 +87,10 @@
 @media (min-width: 768px) {
   .docs-layout .sidebar {
     position: sticky;
+    top: calc(var(--header-h) + 1.25rem);
+    left: auto;
+    right: auto;
+    bottom: auto;
     transform: none;
     z-index: auto;
     background: transparent;
