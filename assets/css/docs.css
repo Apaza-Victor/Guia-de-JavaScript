@@ -109,7 +109,7 @@
 }
 
 /* ---------- Contenido del artículo ---------- */
-.article-content { max-width: 74ch; }
+.article-content { max-width: min(86ch, 100%); }
 .article-content h2 {
   margin-top: 2.2rem;
   padding-top: .4rem;
