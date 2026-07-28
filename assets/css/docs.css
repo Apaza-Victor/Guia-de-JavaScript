@@ -179,39 +179,46 @@ table.compare code { font-size: .85em; }
 
 /* ---------- Paginador anterior/siguiente ---------- */
 .topic-pager {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: .75rem;
-  margin-top: 2rem;
-  padding-top: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  gap: .5rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--line);
 }
 .topic-pager__link {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
-  gap: .2rem;
-  padding: .65rem .85rem;
+  gap: .1rem;
+  padding: .4rem .65rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius-s);
-  transition: border-color var(--speed-fast) var(--ease), background var(--speed-fast) var(--ease), box-shadow var(--speed-fast) var(--ease);
+  border-radius: var(--radius-xs);
+  transition: border-color var(--speed-fast) var(--ease), background var(--speed-fast) var(--ease);
 }
 .topic-pager__link:hover {
   border-color: var(--signal);
   background: var(--signal-soft);
-  box-shadow: 0 1px 6px rgba(0,0,0,.06);
   text-decoration: none;
 }
-.topic-pager__link.next { text-align: right; align-items: flex-end; }
+.topic-pager__link.next { text-align: right; }
 .topic-pager__label {
-  font-family: var(--font-code);
-  font-size: .68rem;
-  color: var(--ink-faint);
   display: flex;
   align-items: center;
-  gap: .3rem;
+  gap: .25rem;
+  font-size: .65rem;
+  color: var(--ink-faint);
+  font-family: var(--font-code);
 }
-.topic-pager__title { color: var(--ink); font-weight: 600; font-size: .85rem; }
-.topic-pager__empty { visibility: hidden; }
+.topic-pager__link.next .topic-pager__label { flex-direction: row-reverse; }
+.topic-pager__label i { font-size: .6rem; }
+.topic-pager__title {
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  line-height: 1.3;
+}
+.topic-pager__link:hover .topic-pager__title { color: var(--ink); }
+.topic-pager__empty { visibility: hidden; pointer-events: none; }
 
 /* ---------- Prism token overrides (coherentes con el theme) ---------- */
 .token.keyword, .token.boolean, .token.null, .token.tag { color: var(--code-keyword); }
