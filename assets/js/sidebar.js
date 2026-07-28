@@ -26,7 +26,7 @@
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
     }
 
-    // ---- Generación del acordeón desde temario.json ----
+    // ---- Generación de la lista plana de temas desde temario.json ----
     if (!nav) return;
 
     const base = document.body.dataset.base || '';
@@ -35,14 +35,8 @@
     fetch(base + 'assets/data/temario.json')
       .then(r => r.json())
       .then(data => {
-        nav.innerHTML = data.niveles.map(nivel => {
-          const containsCurrent = nivel.temas.some(t => t.slug === currentSlug);
-          return `
-          <div class="nav-level ${containsCurrent ? 'is-open' : ''}">
-            <button class="nav-level__head" aria-expanded="${containsCurrent}">
-              <span>${nivel.titulo}</span>
-              <i class="bi bi-chevron-right chevron"></i>
-            </button>
+        nav.innerHTML = data.niveles.map(nivel => `
+          <div class="nav-level">
             <ul class="nav-level__list">
               ${nivel.temas.map(tema => `
                 <li>
@@ -55,15 +49,6 @@
           </div>`;
         }).join('');
 
-        nav.querySelectorAll('.nav-level__head').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const level = btn.closest('.nav-level');
-            const isOpen = level.classList.toggle('is-open');
-            btn.setAttribute('aria-expanded', String(isOpen));
-          });
-        });
-
-        // Lleva el tema activo a la vista dentro del sidebar
         const activeLink = nav.querySelector('.nav-level__list a.is-active');
         if (activeLink) activeLink.scrollIntoView({ block: 'center' });
       })

@@ -16,11 +16,6 @@
     padding-block: 2rem 4rem;
   }
 }
-@media (min-width: 1200px) {
-  .docs-layout {
-    grid-template-columns: var(--sidebar-w) minmax(0, 1fr) var(--toc-w);
-  }
-}
 
 /* ---------- Sidebar de navegación ---------- */
 .sidebar {
@@ -43,45 +38,20 @@
 }
 @media (min-width: 768px) { .docs-layout .sidebar__search { display: none; } }
 
-.nav-level { border-bottom: 1px solid var(--line); }
-.nav-level:last-child { border-bottom: none; }
-
-.nav-level__head {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: .55rem;
-  background: transparent;
-  border: none;
-  color: var(--ink);
-  text-align: left;
-  padding: .8rem 1rem;
-  font-size: .85rem;
-  font-weight: 600;
-}
-.nav-level__head:hover { background: var(--paper-sunken); }
-.nav-level__head .index-chip { flex-shrink: 0; }
-.nav-level__head .chevron {
-  margin-left: auto;
-  transition: transform var(--speed-fast) var(--ease);
-  color: var(--ink-faint);
-  font-size: .8rem;
-}
-.nav-level.is-open .chevron { transform: rotate(90deg); }
+.nav-level:not(:last-child) { border-bottom: 1px solid var(--line); padding-bottom: .15rem; margin-bottom: .15rem; }
 
 .nav-level__list {
   list-style: none;
   margin: 0;
-  padding: 0 1rem .6rem 2.35rem;
-  display: none;
+  padding: .35rem .75rem .5rem;
+  display: flex;
   flex-direction: column;
   gap: .1rem;
 }
-.nav-level.is-open .nav-level__list { display: flex; }
 
 .nav-level__list a {
   display: block;
-  padding: .38rem .5rem;
+  padding: .35rem .5rem;
   border-radius: 6px;
   color: var(--ink-soft);
   font-size: .84rem;
@@ -233,37 +203,6 @@ table.compare code { font-size: .85em; }
 }
 .topic-pager__title { color: var(--ink); font-weight: 600; font-size: .92rem; }
 .topic-pager__empty { visibility: hidden; }
-
-/* ---------- Tabla de contenido "en esta página" ---------- */
-.toc {
-  display: none;
-}
-@media (min-width: 1200px) {
-  .toc {
-    display: block;
-    position: sticky;
-    top: calc(var(--header-h) + 1.25rem);
-    font-size: .82rem;
-    max-height: calc(100vh - var(--header-h) - 2rem);
-    overflow-y: auto;
-  }
-  .toc__title {
-    font-family: var(--font-code);
-    font-size: .74rem;
-    color: var(--ink-faint);
-    margin-bottom: .7rem;
-  }
-  .toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .1rem; }
-  .toc a {
-    display: block;
-    padding: .3rem 0 .3rem .7rem;
-    border-left: 2px solid var(--line);
-    color: var(--ink-faint);
-  }
-  .toc a:hover { color: var(--ink); text-decoration: none; }
-  .toc a.is-active { color: var(--signal); border-left-color: var(--signal); font-weight: 600; }
-  .toc li.h3 a { padding-left: 1.3rem; font-size: .95em; }
-}
 
 /* ---------- Prism token overrides (coherentes con el theme) ---------- */
 .token.keyword, .token.boolean, .token.null, .token.tag { color: var(--code-keyword); }

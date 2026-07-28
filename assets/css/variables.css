@@ -45,7 +45,7 @@
   --radius-s: 6px;
   --radius-m: 10px;
   --radius-l: 16px;
-  --container-max: 1320px;
+  --container-max: 1600px;
 
   /* ---- Motion ---- */
   --ease: cubic-bezier(.4, 0, .2, 1);
