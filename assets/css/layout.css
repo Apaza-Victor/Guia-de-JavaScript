@@ -140,6 +140,7 @@
   color: var(--ink);
 }
 .menu-toggle:hover { background: var(--paper-sunken); }
+.menu-toggle__icon { font-size: 1.3rem; line-height: 1; }
 
 /* ---------- Botón tema ---------- */
 .theme-toggle {
