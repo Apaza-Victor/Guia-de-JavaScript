@@ -27,7 +27,6 @@
   margin-bottom: 1rem;
   padding: 1rem 1rem 0;
 }
-@media (min-width: 768px) { .docs-layout .sidebar__search { display: none; } }
 
 .nav-level:not(:last-child) { border-bottom: 1px solid var(--line); padding-bottom: .15rem; margin-bottom: .15rem; }
 

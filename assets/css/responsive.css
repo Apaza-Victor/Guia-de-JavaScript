@@ -18,6 +18,7 @@
 @media (min-width: 480px) {
   .hero__ctas .btn span.long { display: inline; }
   .hero__ctas .btn span.short { display: none; }
+  .brand span:not(.brand__mark):not(.brand__index) { display: inline; }
 }
 
 /* ---------- ≥576px ---------- */
@@ -54,7 +55,12 @@
   .level-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* ---------- Sidebar off-canvas (por defecto, aplica en home y móvil) ---------- */
+/* ---------- Código: menos padding en móvil muy angosto ---------- */
+@media (max-width: 479px) {
+  .code-block pre { padding: .7rem .75rem; font-size: .8rem; }
+}
+
+/* ---------- Sidebar off-canvas ---------- */
 .sidebar {
   position: fixed;
   inset: var(--header-h) 0 0 0;
