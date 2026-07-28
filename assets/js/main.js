@@ -12,15 +12,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ---- Header nav: genera los dropdowns de niveles desde temario.json ----
+  // ---- Header nav: genera los dropdowns de niveles principales ----
   const headerNav = document.getElementById('header-nav');
   if (headerNav) {
     fetch((document.body.dataset.base || '') + 'assets/data/temario.json')
       .then(r => r.json())
       .then(data => {
-        headerNav.innerHTML = data.niveles.map(nivel => `
+        headerNav.innerHTML = data.niveles.slice(0, 6).map(nivel => `
           <div class="header-nav__item">
-            <button class="header-nav__btn">${nivel.titulo} <i class="bi bi-chevron-down"></i></button>
+            <button class="header-nav__btn">${nivel.titulo === 'Programación Orientada a Objetos' ? 'POO' : nivel.titulo} <i class="bi bi-chevron-down"></i></button>
             <div class="header-nav__dropdown">
               ${nivel.temas.map(t => `
                 <a class="header-nav__link" href="${document.body.dataset.base || ''}pages/${nivel.slug}/${t.slug}.html">${t.titulo}</a>
@@ -30,6 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
       })
       .catch(() => {});
+  }
+
+  // ---- Back to top ----
+  const backBtn = document.getElementById('back-to-top');
+  if (backBtn) {
+    const toggleBack = () => {
+      backBtn.classList.toggle('is-visible', window.scrollY > 400);
+    };
+    window.addEventListener('scroll', toggleBack, { passive: true });
+    toggleBack();
   }
 });
 

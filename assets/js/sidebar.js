@@ -40,7 +40,6 @@
           return `
           <div class="nav-level ${containsCurrent ? 'is-open' : ''}">
             <button class="nav-level__head" aria-expanded="${containsCurrent}">
-              <span class="index-chip">nivel<b>[${nivel.index}]</b></span>
               <span>${nivel.titulo}</span>
               <i class="bi bi-chevron-right chevron"></i>
             </button>

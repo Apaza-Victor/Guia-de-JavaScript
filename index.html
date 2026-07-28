@@ -71,7 +71,7 @@
   <section class="hero">
     <div class="container hero__grid">
       <div>
-        <span class="hero__kicker"><span class="dot"></span> 55 temas · 8 niveles · gratis y abierto</span>
+        <span class="hero__kicker"><span class="dot"></span> 55 temas · 8 niveles · 100% completo · gratis y abierto</span>
         <h1>De <span class="accent">cero</span> a experto en JavaScript, <br> sin atajos.</h1>
         <p class="hero__lede">Una guía completa y ordenada para aprender JavaScript de verdad: desde tu primera variable hasta closures, Event Loop y patrones de diseño. Teoría clara, ejemplos ejecutables.</p>
         <div class="hero__ctas">
@@ -166,13 +166,27 @@ listo_para → true'></div><span class="caret" aria-hidden="true"></span>
   </div>
 </footer>
 
+<aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+  <div class="sidebar__search">
+    <div class="header-search" style="display:flex;max-width:none;">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+    </div>
+  </div>
+  <nav id="sidebar-nav" aria-label="Temario"></nav>
+</aside>
+
 <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<a href="#" class="back-to-top" id="back-to-top" aria-label="Volver arriba"><i class="bi bi-chevron-up"></i></a>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="assets/js/theme.js"></script>
 <script src="assets/js/sidebar.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="assets/js/search.js"></script>
+<script src="assets/js/progress.js"></script>
 
 <!-- Genera las cards de nivel desde temario.json -->
 <script>

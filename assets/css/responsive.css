@@ -55,28 +55,38 @@
   .level-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* ---------- Sidebar off-canvas (páginas internas) ---------- */
-@media (max-width: 767px) {
-  .sidebar {
-    position: fixed;
-    inset: var(--header-h) 0 0 0;
-    transform: translateX(-100%);
-    transition: transform var(--speed-base) var(--ease);
-    z-index: 90;
-    overflow-y: auto;
-    background: var(--paper);
+/* ---------- Sidebar off-canvas (por defecto, aplica en home y móvil) ---------- */
+.sidebar {
+  position: fixed;
+  inset: var(--header-h) 0 0 0;
+  transform: translateX(-100%);
+  transition: transform var(--speed-base) var(--ease);
+  z-index: 90;
+  overflow-y: auto;
+  background: var(--paper);
+}
+.sidebar.is-open { transform: translateX(0); }
+.sidebar-overlay {
+  position: fixed;
+  inset: var(--header-h) 0 0 0;
+  background: rgba(0,0,0,.35);
+  z-index: 85;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--speed-base) var(--ease);
+}
+.sidebar-overlay.is-open { opacity: 1; pointer-events: auto; }
+
+/* En páginas de tema (dentro de .docs-layout), el sidebar es visible en desktop */
+@media (min-width: 768px) {
+  .docs-layout .sidebar {
+    position: sticky;
+    inset: auto;
+    transform: none;
+    z-index: auto;
+    background: transparent;
   }
-  .sidebar.is-open { transform: translateX(0); }
-  .sidebar-overlay {
-    position: fixed;
-    inset: var(--header-h) 0 0 0;
-    background: rgba(0,0,0,.35);
-    z-index: 85;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--speed-base) var(--ease);
-  }
-  .sidebar-overlay.is-open { opacity: 1; pointer-events: auto; }
+  .docs-layout .sidebar-overlay { display: none; }
 }
 
 
