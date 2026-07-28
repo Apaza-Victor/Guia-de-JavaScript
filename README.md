@@ -2,6 +2,8 @@
 
 Guía web completa para aprender JavaScript de cero a experto. 55 temas organizados en 8 niveles progresivos, con ejemplos de código, modo oscuro, buscador y seguimiento de progreso.
 
+🌐 **Sitio en vivo:** [apaza-victor.github.io/Guia-de-JavaScript/](https://apaza-victor.github.io/Guia-de-JavaScript/)
+
 ## Cómo verla en tu computadora
 
 El sitio carga `assets/data/temario.json` con `fetch`, así que **no la abras con doble clic** (el navegador bloquea `fetch` en `file://`). Sirve la carpeta con un servidor local:
@@ -26,7 +28,7 @@ js-master/
 ├── AGENTS.md                      → Contexto y patrón del proyecto para OpenCode
 ├── assets/
 │   ├── css/                       → 6 archivos: variables, base, layout, components, docs, responsive
-│   ├── js/                        → 7 scripts: theme, sidebar, main, toc, codeblock, search, progress
+│   ├── js/                        → 6 scripts: theme, sidebar, main, codeblock, search, progress
 │   └── data/temario.json          → Fuente única del temario (8 niveles, 55 temas)
 └── pages/
     ├── fundamentos/               → Nivel 0 (10 temas)
@@ -42,44 +44,45 @@ js-master/
 ## Funcionalidades
 
 ### Navegación
-- **Header nav** con dropdowns por nivel en desktop
-- **Sidebar acordeón** generado desde `temario.json` en páginas internas
-- **Menú hamburguesa** con off-canvas sidebar en móvil
-- **Paginador** anterior/siguiente entre temas secuenciales
-- **TOC** "en esta página" con scrollspy (IntersectionObserver)
+- **Header nav** con 6 dropdowns de niveles en desktop (Fundamentos, Estructuras de datos, DOM y eventos, Asincronía, JS moderno, POO). Los niveles 6-7 (Buenas prácticas, Avanzado) están solo en el sidebar.
+- **Sidebar plano** (sin acordeón) generado desde `temario.json` con separadores entre niveles — resalta el tema activo automáticamente.
+- **Off-canvas en todos los tamaños**: el sidebar se abre con el botón hamburguesa (siempre visible) y se cierra con overlay o tecla Escape. En escritorio mide 320px de ancho.
+- **Buscador** en tiempo real sobre los 55 temas tanto en el header (desktop) como dentro del sidebar (atajo tecla `/`).
+- **Paginador** anterior/siguiente secuencial entre los 55 temas, encadenado entre niveles.
 
 ### UX
 - **Dark/light mode** con persistencia en localStorage y respeto a `prefers-color-scheme`
-- **Buscador** en tiempo real sobre los 55 temas (atajo tecla `/`)
 - **Progreso de lectura**: botón "marcar como completado" por tema + barra global en el home
-- **Botón "volver arriba"** flotante al hacer scroll
-- **Responsive** mobile-first desde 368px hasta 1400px+
+- **Botón "volver arriba"** flotante al hacer scroll (> 400px)
+- **Responsive** mobile-first desde 368px hasta pantallas anchas
 - **Animaciones** AOS en scroll
-- **Resaltado de sintaxis** con Prism.js + botón copiar
+- **Resaltado de sintaxis** con Prism.js (autoloader) + botón copiar en cada bloque de código
+- **Contenido full-width** en páginas de tema (sin columna de sidebar fija)
 
 ### Stack técnico
-- HTML5 semántico + CSS3 con variables custom (BEM)
+- HTML5 semántico + CSS3 con variables custom (BEM, mobile-first)
 - JavaScript vanilla ES6+ (sin frameworks)
 - Google Fonts (Space Mono, Inter, JetBrains Mono)
 - Bootstrap Icons
-- AOS (animaciones)
-- Prism.js (autoloader)
+- AOS (animaciones al hacer scroll)
+- Prism.js con autoloader
 
 ## Estado del proyecto
 
 - [x] Sistema de diseño (variables, dark/light, responsive)
-- [x] Layout de páginas internas (sidebar + TOC + template de tema)
+- [x] Layout de páginas internas (single column, sidebar off-canvas, contenido full-width)
 - [x] 55 páginas de tema completas (8 niveles)
-- [x] Header nav con dropdowns por nivel
-- [x] Buscador en tiempo real
+- [x] Header nav con dropdowns por nivel (6 niveles visibles)
+- [x] Sidebar plano con todos los temas
+- [x] Buscador en tiempo real (header + sidebar)
 - [x] Progreso de lectura con localStorage
 - [x] Botón volver arriba
-- [ ] Despliegue (GitHub Pages / Vercel / Netlify)
+- [x] Despliegue en GitHub Pages
 - [ ] Lighthouse 90+ en performance y accesibilidad
 
 ## Notas técnicas
 
 - `assets/data/temario.json` es la fuente única de verdad — sidebar, buscador, header nav y progreso se alimentan de él.
 - Cada página de tema define `data-base="../../"` y `data-current-slug="..."` en el `<body>` para que los scripts sepan cómo resolver rutas y qué enlace resaltar.
-- Los scripts JS son independientes y se cargan vía `<script src="">` en orden: `theme.js → sidebar.js → main.js → search.js → progress.js → toc.js → codeblock.js`.
+- Los scripts JS son independientes y se cargan vía `<script src="">` en orden: `theme.js → sidebar.js → codeblock.js → main.js → search.js → progress.js`.
 - Para agregar un tema nuevo: crear el `.html` en `pages/<nivel>/<slug>.html` siguiendo el patrón de las páginas existentes, y añadir la entrada en `temario.json`.
