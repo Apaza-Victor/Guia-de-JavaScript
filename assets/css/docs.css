@@ -98,7 +98,7 @@
   margin-bottom: .9rem;
 }
 .topic-header h1 { margin-bottom: .6rem; }
-.topic-header__lede { font-size: 1.02rem; max-width: 68ch; }
+.topic-header__lede { font-size: 1.02rem; }
 .reading-time {
   font-family: var(--font-code);
   font-size: .78rem;
@@ -109,7 +109,6 @@
 }
 
 /* ---------- Contenido del artículo ---------- */
-.article-content { max-width: min(86ch, 100%); }
 .article-content h2 {
   margin-top: 2.2rem;
   padding-top: .4rem;
