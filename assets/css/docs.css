@@ -12,12 +12,11 @@
   .docs-layout {
     display: grid;
     grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: start;
     padding-block: 2rem 4rem;
-    padding-inline: 0 2rem;
+    padding-inline: 0;
   }
-  .docs-layout > main { padding-right: 1.5rem; }
 }
 
 /* ---------- Sidebar de navegación ---------- */
