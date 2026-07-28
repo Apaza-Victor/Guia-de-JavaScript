@@ -134,13 +134,31 @@
   align-items: center;
   justify-content: center;
   width: 40px; height: 40px;
-  background: transparent;
+  background: var(--paper-raised);
   border: 1px solid var(--line);
   border-radius: var(--radius-s);
   color: var(--ink);
+  transition: background var(--speed-fast) var(--ease),
+              border-color var(--speed-fast) var(--ease),
+              color var(--speed-fast) var(--ease),
+              transform var(--speed-fast) var(--ease);
 }
-.menu-toggle:hover { background: var(--paper-sunken); }
-.menu-toggle__icon { font-size: 1.3rem; line-height: 1; }
+.menu-toggle:hover { background: var(--paper-sunken); border-color: var(--line-strong); }
+.menu-toggle:active { transform: scale(.93); }
+.menu-toggle[aria-expanded="true"] {
+  background: var(--signal-soft);
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+.menu-toggle__icon { display: none; }
+.menu-toggle::before {
+  content: "☰";
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform var(--speed-fast) var(--ease);
+}
+.menu-toggle[aria-expanded="true"]::before { content: "✕"; }
 
 /* ---------- Botón tema ---------- */
 .theme-toggle {

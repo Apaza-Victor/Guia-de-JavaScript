@@ -11,11 +11,8 @@
 
 @media (min-width: 768px) {
   .docs-layout {
-    display: grid;
-    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
-    gap: 1rem;
-    align-items: start;
-    padding-inline: 0;
+    display: block;
+    padding-inline: 1.5rem;
     padding-block: 2rem 4rem;
   }
 }
@@ -41,7 +38,7 @@
 }
 @media (min-width: 768px) { .docs-layout .sidebar__search { display: none; } }
 
-.nav-level:not(:last-child) { border-bottom: 1px solid var(--line); padding-bottom: .15rem; margin-bottom: .15rem; }
+.nav-level + .nav-level { border-top: 1px solid var(--line); }
 
 .nav-level__list {
   list-style: none;
