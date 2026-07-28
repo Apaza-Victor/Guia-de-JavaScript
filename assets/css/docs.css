@@ -5,7 +5,6 @@
 .docs-layout {
   display: block;
   padding-block: 1.5rem 3rem;
-  padding-inline: clamp(.75rem, 2vw, 2rem);
   max-width: none;
 }
 
@@ -13,10 +12,12 @@
   .docs-layout {
     display: grid;
     grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
-    gap: 2.25rem;
+    gap: 1.5rem;
     align-items: start;
     padding-block: 2rem 4rem;
+    padding-inline: 0 2rem;
   }
+  .docs-layout > main { padding-right: 1.5rem; }
 }
 
 /* ---------- Sidebar de navegación ---------- */
