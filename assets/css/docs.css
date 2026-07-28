@@ -5,6 +5,9 @@
 .docs-layout {
   display: block;
   padding-block: 1.5rem 3rem;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: clamp(.75rem, 2vw, 2rem);
 }
 
 @media (min-width: 768px) {
@@ -178,30 +181,36 @@ table.compare code { font-size: .85em; }
 .topic-pager {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-top: 2.5rem;
-  padding-top: 1.5rem;
+  gap: .75rem;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
   border-top: 1px solid var(--line);
 }
 .topic-pager__link {
   display: flex;
   flex-direction: column;
-  gap: .3rem;
-  padding: 1rem 1.1rem;
+  gap: .2rem;
+  padding: .65rem .85rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-s);
+  transition: border-color var(--speed-fast) var(--ease), background var(--speed-fast) var(--ease), box-shadow var(--speed-fast) var(--ease);
 }
-.topic-pager__link:hover { border-color: var(--line-strong); background: var(--paper-sunken); text-decoration: none; }
+.topic-pager__link:hover {
+  border-color: var(--signal);
+  background: var(--signal-soft);
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  text-decoration: none;
+}
 .topic-pager__link.next { text-align: right; align-items: flex-end; }
 .topic-pager__label {
   font-family: var(--font-code);
-  font-size: .72rem;
+  font-size: .68rem;
   color: var(--ink-faint);
   display: flex;
   align-items: center;
   gap: .3rem;
 }
-.topic-pager__title { color: var(--ink); font-weight: 600; font-size: .92rem; }
+.topic-pager__title { color: var(--ink); font-weight: 600; font-size: .85rem; }
 .topic-pager__empty { visibility: hidden; }
 
 /* ---------- Prism token overrides (coherentes con el theme) ---------- */

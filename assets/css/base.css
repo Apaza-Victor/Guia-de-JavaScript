@@ -85,7 +85,7 @@ button { cursor: pointer; }
   width: 100%;
   max-width: var(--container-max);
   margin-inline: auto;
-  padding-inline: clamp(.75rem, 2vw, 2rem);
+  padding-inline: 1rem;
 }
 
 .eyebrow {
