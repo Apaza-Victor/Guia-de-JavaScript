@@ -5,9 +5,8 @@
 .docs-layout {
   display: block;
   padding-block: 1.5rem 3rem;
-  max-width: 90rem;
-  margin-inline: auto;
   padding-inline: clamp(.75rem, 2vw, 2rem);
+  max-width: none;
 }
 
 @media (min-width: 768px) {
