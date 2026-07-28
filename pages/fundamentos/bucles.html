@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bucles — JS Master</title>
+<meta name="description" content="for, while, do...while, for...of y for...in: cuándo y cómo iterar en JavaScript.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="bucles">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[0] fundamentos</a>
+      <span class="sep">/</span>
+      <span class="current">bucles</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[8]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1>Bucles: <code>for</code>, <code>while</code>, <code>do...while</code>, <code>for...of</code> y <code>for...in</code></h1>
+      <p class="topic-header__lede">Repetir código es una de las tareas más frecuentes en programación. JavaScript ofrece varios tipos de bucles, cada uno pensado para un escenario distinto. Elegir el adecuado hace tu código más claro y menos propenso a errores.</p>
+    </header>
+
+    <article class="article-content">
+      <h2><code>for</code> clásico</h2>
+      <p>El bucle más tradicional. Tiene tres partes: inicialización, condición y actualización. Se usa sobre todo cuando sabes de antemano cuántas iteraciones necesitas.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>for-clasico.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">for (let i = 0; i < 5; i++) {
+  console.log("Vuelta " + i);
+}
+// Vuelta 0, Vuelta 1, …, Vuelta 4</code></pre>
+      </div>
+
+      <h2><code>while</code></h2>
+      <p>Ejecuta el bloque mientras la condición sea <code>true</code>. La condición se evalúa <strong>antes</strong> de cada iteración, así que puede no ejecutarse nunca si la condición inicial es falsa.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>while.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let contador = 0;
+while (contador < 3) {
+  console.log(contador);
+  contador++;
+}
+// 0, 1, 2</code></pre>
+      </div>
+
+      <h2><code>do...while</code></h2>
+      <p>Similar a <code>while</code>, pero la condición se evalúa <strong>después</strong> de ejecutar el bloque. Esto garantiza que el código se ejecute al menos una vez.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>do-while.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let i = 0;
+do {
+  console.log(i);
+  i++;
+} while (i < 3);
+// 0, 1, 2</code></pre>
+      </div>
+
+      <h2><code>for...of</code></h2>
+      <p>Itera sobre valores de objetos iterables como arrays, strings, Map o Set. Es la forma más limpia de recorrer un array cuando no necesitas el índice.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>for-of.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let frutas = ["manzana", "banana", "cereza"];
+for (let fruta of frutas) {
+  console.log(fruta);
+}
+// "manzana", "banana", "cereza"</code></pre>
+      </div>
+
+      <h2><code>for...in</code></h2>
+      <p>Itera sobre las <strong>claves</strong> (propiedades) de un objeto. <strong>No</strong> lo uses con arrays: aunque funciona, itera sobre los índices como strings y puede incluir propiedades heredadas.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>for-in.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let usuario = { nombre: "Ana", edad: 28, rol: "admin" };
+for (let clave in usuario) {
+  console.log(clave + ": " + usuario[clave]);
+}
+// "nombre: Ana", "edad: 28", "rol: admin"</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>No uses <code>for...in</code> para arrays:</strong> recorre los índices como strings (<code>"0"</code>, <code>"1"</code>, …) y puede traer propiedades del prototipo. Para arrays usa <code>for...of</code> o los métodos como <code>forEach</code>.</p>
+      </div>
+
+      <h2><code>break</code> y <code>continue</code></h2>
+      <p><code>break</code> sale del bucle por completo. <code>continue</code> salta a la siguiente iteración sin ejecutar el resto del bloque.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>break-continue.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">for (let i = 0; i < 10; i++) {
+  if (i === 5) break;      // termina el bucle en 5
+  if (i % 2 === 0) continue; // salta pares
+  console.log(i);
+}
+// 1, 3</code></pre>
+      </div>
+
+      <h2>Comparación rápida</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Bucle</th><th>Cuándo usarlo</th><th>Itera sobre</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>for</code></td><td>Número conocido de iteraciones</td><td>índices numéricos</td></tr>
+            <tr><td><code>while</code></td><td>Condición variable, quizá 0 iteraciones</td><td>—</td></tr>
+            <tr><td><code>do...while</code></td><td>Al menos una ejecución asegurada</td><td>—</td></tr>
+            <tr><td><code>for...of</code></td><td>Recorrer arrays, strings, Map, Set</td><td>valores</td></tr>
+            <tr><td><code>for...in</code></td><td>Recorrer propiedades de objetos</td><td>claves</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="condicionales.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Estructuras condicionales</span>
+      </a>
+      <a class="topic-pager__link next" href="funciones.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Funciones</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

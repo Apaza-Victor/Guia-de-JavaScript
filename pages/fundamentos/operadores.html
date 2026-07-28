@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Operadores — JS Master</title>
+<meta name="description" content="Operadores aritméticos, de comparación, lógicos y ternario en JavaScript con ejemplos prácticos.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="operadores">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[0] fundamentos</a>
+      <span class="sep">/</span>
+      <span class="current">operadores</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[5]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1>Operadores: aritméticos, comparación, lógicos y ternario</h1>
+      <p class="topic-header__lede">Los operadores son los bloques con los que construyes lógica: desde sumar dos números hasta decidir qué bloque de código ejecutar. JavaScript tiene varios tipos, y cada uno tiene matices que vale la pena conocer.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Operadores aritméticos</h2>
+      <p>Sirven para realizar operaciones matemáticas. Los mismos de siempre, más el módulo (<code>%</code>) que da el resto de una división, y la exponenciación (<code>**</code>) introducida en ES2016.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>aritmeticos.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let suma = 10 + 5;       // 15
+let resta = 10 - 5;      // 5
+let multi = 10 * 5;      // 50
+let div = 10 / 3;        // 3.333...
+let modulo = 10 % 3;     // 1 — resto de 10 ÷ 3
+let expo = 2 ** 4;       // 16 — 2 elevado a 4
+
+console.log(suma, resta, multi, div, modulo, expo);</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Módulo no es solo para números pares:</strong> también se usa para ciclar índices, convertir unidades o validar rangos. Por ejemplo, <code>i % 2 === 0</code> detecta pares, pero <code>i % 4</code> te da ciclos de 4.</p>
+      </div>
+
+      <h2>Operadores de comparación</h2>
+      <p>Comparan dos valores y devuelven un booleano. La gran trampa: <code>==</code> vs <code>===</code>. El primero permite coerción de tipos (ver tema siguiente), el segundo es estricto y siempre deberías preferirlo.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>comparacion.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">console.log(5 == "5");   // true  (coerción: string → number)
+console.log(5 === "5");  // false (tipos distintos)
+
+console.log(5 != "5");   // false (coerción)
+console.log(5 !== "5");  // true  (tipos distintos)
+
+console.log(10 > 5);     // true
+console.log(10 < 5);     // false
+console.log(10 >= 10);   // true
+console.log(10 <= 5);    // false</code></pre>
+      </div>
+
+      <h2>Operadores lógicos</h2>
+      <p>Combinan expresiones booleanas. <code>&&</code> (AND) devuelve <code>true</code> solo si ambos operandos son <em>truthy</em>. <code>||</code> (OR) devuelve <code>true</code> si al menos uno lo es. <code>!</code> (NOT) niega el valor.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>logicos.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let edad = 22;
+let tieneCarnet = true;
+
+// AND — ambas condiciones deben cumplirse
+console.log(edad >= 18 && tieneCarnet); // true
+
+// OR — basta con una
+console.log(edad >= 18 || tieneCarnet); // true
+
+// NOT
+console.log(!tieneCarnet); // false</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>Short-circuit evaluation:</strong> <code>&&</code> y <code>||</code> no siempre devuelven un booleano. Evalúan de izquierda a derecha y devuelven el primer valor que determina el resultado. Por ejemplo, <code>"A" || "B"</code> devuelve <code>"A"</code> porque es truthy y corta la evaluación.</p>
+      </div>
+
+      <h2>Operador ternario</h2>
+      <p>Es una forma compacta de escribir un <code>if/else</code> simple. Sintaxis: <code>condición ? valor_si_true : valor_si_false</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>ternario.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let edad = 20;
+let mensaje = edad >= 18 ? "Eres mayor de edad" : "Eres menor";
+console.log(mensaje); // "Eres mayor de edad"</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Úsalo con mesura.</strong> El ternario es ideal para asignaciones rápidas. Si la lógica se complica (ternarios anidados), mejor usa <code>if/else</code> tradicional: tu código se lee de arriba abajo, no en diagonal.</p>
+      </div>
+
+      <h2>Comparación rápida</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Operador</th><th>Tipo</th><th>Ejemplo</th><th>Resultado</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>+</code></td><td>Aritmético</td><td><code>5 + 3</code></td><td><code>8</code></td></tr>
+            <tr><td><code>**</code></td><td>Aritmético</td><td><code>2 ** 3</code></td><td><code>8</code></td></tr>
+            <tr><td><code>%</code></td><td>Aritmético</td><td><code>10 % 3</code></td><td><code>1</code></td></tr>
+            <tr><td><code>===</code></td><td>Comparación</td><td><code>5 === "5"</code></td><td><code>false</code></td></tr>
+            <tr><td><code>==</code></td><td>Comparación</td><td><code>5 == "5"</code></td><td><code>true</code></td></tr>
+            <tr><td><code>&&</code></td><td>Lógico</td><td><code>true && false</code></td><td><code>false</code></td></tr>
+            <tr><td><code>||</code></td><td>Lógico</td><td><code>true || false</code></td><td><code>true</code></td></tr>
+            <tr><td><code>?:</code></td><td>Ternario</td><td><code>a > b ? "a" : "b"</code></td><td>según condición</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="tipos-de-datos.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Tipos de datos</span>
+      </a>
+      <a class="topic-pager__link next" href="coercion-de-tipos.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Coerción de tipos</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

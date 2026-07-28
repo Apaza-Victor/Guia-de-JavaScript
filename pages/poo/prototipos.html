@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototipos — JS Master</title>
+<meta name="description" content="Herencia prototípica: prototype, __proto__, Object.create y la cadena de prototipos.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="prototipos">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[3] programación orientada a objetos</a>
+      <span class="sep">/</span>
+      <span class="current">prototipos y herencia prototípica</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[25]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Prototipos y herencia prototípica</h1>
+      <p class="topic-header__lede">JavaScript no tiene clases clásicas. En lugar de eso, los objetos heredan de otros objetos a través de una <strong>cadena de prototipos</strong>. Este mecanismo es la base de todo en el lenguaje, incluido el sistema de objetos que usas a diario.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>¿Qué es un prototipo?</h2>
+      <p>Un prototipo es simplemente un objeto del que otro objeto hereda propiedades y métodos. Cuando accedes a una propiedad que no existe en el objeto, JavaScript la busca hacia arriba en la cadena de prototipos hasta encontrarla o llegar al final (<code>null</code>).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>cadena-de-prototipos.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const objeto = {};
+console.log(objeto.toString()); // "[object Object]"
+
+// toString no está en objeto, pero está en Object.prototype
+console.log(Object.prototype.hasOwnProperty("toString")); // true</code></pre>
+      </div>
+
+      <h2><code>[[Prototype]]</code> y <code>__proto__</code></h2>
+      <p>Cada objeto tiene un enlace interno llamado <code>[[Prototype]]</code> (accesible vía <code>__proto__</code> en la práctica, aunque es una propiedad obsoleta a favor de <code>Object.getPrototypeOf</code>).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>proto.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const padre = { apellido: "García" };
+const hijo = { nombre: "Ana" };
+
+hijo.__proto__ = padre; // establecer prototipo (no recomendado)
+
+console.log(hijo.nombre);  // "Ana"
+console.log(hijo.apellido); // "García" — heredado
+
+// Forma moderna:
+Object.setPrototypeOf(hijo, padre);</code></pre>
+      </div>
+
+      <h2>La propiedad <code>prototype</code> de las funciones</h2>
+      <p>Las funciones constructoras tienen una propiedad <code>prototype</code> que se asigna como prototipo de los objetos creados con <code>new</code>. No confundir con el <code>[[Prototype]]</code> interno de la función.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>function-prototype.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function Persona(nombre) {
+  this.nombre = nombre;
+}
+
+Persona.prototype.saludar = function () {
+  console.log(`Hola, soy ${this.nombre}`);
+};
+
+const ana = new Persona("Ana");
+ana.saludar(); // "Hola, soy Ana"
+
+console.log(ana.__proto__ === Persona.prototype); // true</code></pre>
+      </div>
+
+      <h2><code>Object.create</code></h2>
+      <p>Crea un objeto nuevo con el prototipo que elijas. Es la forma más directa de herencia prototípica.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>object-create.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const animal = {
+  respirar() {
+    console.log("respirando...");
+  }
+};
+
+const perro = Object.create(animal);
+perro.ladrar = function () {
+  console.log("guau!");
+};
+
+perro.respirar(); // "respirando..." — heredado
+perro.ladrar();    // "guau!"</code></pre>
+      </div>
+
+      <h2><code>hasOwnProperty</code></h2>
+      <p>Para saber si una propiedad es propia del objeto (no heredada) usa <code>hasOwnProperty</code> o, mejor, <code>Object.hasOwn</code> (ES2022).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>has-own.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const obj = { a: 1 };
+console.log(obj.hasOwnProperty("a"));            // true
+console.log(obj.hasOwnProperty("toString"));     // false
+
+// ES2022+
+console.log(Object.hasOwn(obj, "a"));            // true</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong><code>__proto__</code> vs <code>prototype</code>:</strong> <code>__proto__</code> es el prototipo interno (<code>[[Prototype]]</code>) de un objeto; <code>prototype</code> es una propiedad que solo tienen las funciones (constructoras) y que se asignará como <code>__proto__</code> a los objetos que creen con <code>new</code>.</p>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="this.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Objetos y this</span>
+      </a>
+      <a class="topic-pager__link next" href="clases-es6.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Clases ES6</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

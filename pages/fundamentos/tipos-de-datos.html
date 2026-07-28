@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tipos de datos — JS Master</title>
+<meta name="description" content="Tipos primitivos y de referencia en JavaScript, y cómo saber cuál estás usando con typeof.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="tipos-de-datos">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[0] fundamentos</a>
+      <span class="sep">/</span>
+      <span class="current">tipos de datos</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[4]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1>Tipos de datos: primitivos vs referencia</h1>
+      <p class="topic-header__lede">Todo valor en JavaScript pertenece a un tipo, y ese tipo determina cómo se copia, se compara y se guarda en memoria. Confundir un tipo primitivo con uno de referencia es una de las fuentes más comunes de bugs para quien empieza.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Tipos primitivos</h2>
+      <p>Son 7, y se copian <strong>por valor</strong>: cuando asignas uno a otra variable, se duplica el valor completo.</p>
+      <ul>
+        <li><code>string</code> — texto: <code>"hola"</code></li>
+        <li><code>number</code> — números (enteros y decimales): <code>42</code>, <code>3.14</code></li>
+        <li><code>boolean</code> — <code>true</code> / <code>false</code></li>
+        <li><code>undefined</code> — variable declarada sin valor asignado</li>
+        <li><code>null</code> — ausencia de valor, asignada intencionalmente</li>
+        <li><code>bigint</code> — enteros arbitrariamente grandes: <code>123n</code></li>
+        <li><code>symbol</code> — identificador único e inmutable</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>primitivos.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let a = 10;
+let b = a; // se copia el VALOR
+b = 20;
+
+console.log(a); // 10 — a no cambió</code></pre>
+      </div>
+
+      <h2>Tipos de referencia</h2>
+      <p>Objetos, arrays y funciones se copian <strong>por referencia</strong>: la variable no guarda el valor, guarda una dirección hacia donde vive ese valor en memoria.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>referencia.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let obj1 = { valor: 10 };
+let obj2 = obj1; // se copia la REFERENCIA
+obj2.valor = 20;
+
+console.log(obj1.valor); // 20 — ¡ambas apuntan al mismo objeto!</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p>Por esto, comparar dos objetos con <code>===</code> compara si son la <strong>misma referencia</strong>, no si tienen el mismo contenido: <code>{a:1} === {a:1}</code> da <code>false</code>.</p>
+      </div>
+
+      <h2>Detectar el tipo con typeof</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>typeof.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">typeof "hola";      // "string"
+typeof 42;           // "number"
+typeof true;         // "boolean"
+typeof undefined;    // "undefined"
+typeof null;         // "object" — famoso bug histórico del lenguaje
+typeof [1, 2, 3];    // "object" — los arrays son objetos
+typeof function(){}; // "function"</code></pre>
+      </div>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="variables.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Variables: var, let, const</span>
+      </a>
+      <a class="topic-pager__link next" href="operadores.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Operadores</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

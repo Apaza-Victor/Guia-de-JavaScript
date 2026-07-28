@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polimorfismo y composición — JS Master</title>
+<meta name="description" content="Polimorfismo en JS y por qué la composición suele ser mejor que la herencia.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="polimorfismo-composicion">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[3] programación orientada a objetos</a>
+      <span class="sep">/</span>
+      <span class="current">polimorfismo y composición</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[28]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1>Polimorfismo y composición vs herencia</h1>
+      <p class="topic-header__lede">El polimorfismo permite que objetos distintos respondan al mismo mensaje de formas diferentes. La composición, por su parte, te permite construir objetos combinando piezas pequeñas en lugar de heredar jerarquías rígidas.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Polimorfismo: misma interfaz, distinto comportamiento</h2>
+      <p>En JavaScript el polimorfismo se da de forma natural gracias al <strong>duck typing</strong>: si un objeto tiene el método que esperas, puedes tratarlo como si fuera de ese tipo, sin importar su clase.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>polimorfismo.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">class Pato {
+  hacerSonido() {
+    console.log("¡Cuac!");
+  }
+}
+
+class Gallo {
+  hacerSonido() {
+    console.log("¡Quiquiriquí!");
+  }
+}
+
+function ejecutarSonido(animal) {
+  animal.hacerSonido();
+}
+
+ejecutarSonido(new Pato());  // "¡Cuac!"
+ejecutarSonido(new Gallo()); // "¡Quiquiriquí!"</code></pre>
+      </div>
+
+      <p>No importa que <code>Pato</code> y <code>Gallo</code> compartan o no una clase padre. Lo único que necesita <code>ejecutarSonido</code> es que el argumento tenga un método <code>hacerSonido</code>.</p>
+
+      <h2>Duck typing</h2>
+      <p>"Si camina como pato y suena como pato, entonces es un pato". Así funciona el tipado en JavaScript: no te fijas en la herencia, te fijas en las capacidades del objeto.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>duck-typing.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function volar(cosa) {
+  if (typeof cosa.volar === "function") {
+    cosa.volar();
+  } else {
+    console.log("Esto no vuela");
+  }
+}
+
+const pajaro = { volar: () => console.log("volando alto") };
+const avion = { volar: () => console.log("despegando") };
+const piedra = {};
+
+volar(pajaro); // "volando alto"
+volar(avion);  // "despegando"
+volar(piedra); // "Esto no vuela"</code></pre>
+      </div>
+
+      <h2>Herencia vs composición</h2>
+      <p>La herencia modela relaciones de tipo "es un" (<em>is-a</em>). La composición modela "tiene un" (<em>has-a</em>). En la práctica, la composición suele ser más flexible.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>composicion.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Composición: un objeto se forma combinando otros objetos
+const puedeVolar = {
+  volar() { console.log("volando..."); }
+};
+
+const puedeNadar = {
+  nadar() { console.log("nadando..."); }
+};
+
+function crearPato() {
+  return Object.assign({}, puedeVolar, puedeNadar);
+}
+
+const pato = crearPato();
+pato.volar(); // "volando..."
+pato.nadar(); // "nadando..."</code></pre>
+      </div>
+
+      <h2>Comparación: herencia vs composición</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Aspecto</th><th>Herencia</th><th>Composición</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Relación</td><td>"es un" (is-a)</td><td>"tiene un" (has-a)</td></tr>
+            <tr><td>Acoplamiento</td><td>Alto (hijos atados al padre)</td><td>Bajo (piezas intercambiables)</td></tr>
+            <tr><td>Flexibilidad</td><td>Menor (jerarquías rígidas)</td><td>Mayor (combina lo que necesitas)</td></tr>
+            <tr><td>Reutilización</td><td>Vía herencia vertical</td><td>Vía mixins / objetos pequeños</td></tr>
+            <tr><td>Problema típico</td><td>Problema del diamante, jerarquías profundas</td><td>Más archivos/objetos que gestionar</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Mixins con <code>Object.assign</code></h2>
+      <p>Los mixins son una forma de componer comportamientos copiando métodos de un objeto a otro. <code>Object.assign</code> es la herramienta perfecta para esto.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>mixins.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const conRegistro = {
+  registrar(accion) {
+    if (!this.acciones) this.acciones = [];
+    this.acciones.push({ accion, timestamp: Date.now() });
+  },
+  historial() {
+    return this.acciones;
+  }
+};
+
+class Ventana {
+  abrir() { this.registrar("abrir"); }
+  cerrar() { this.registrar("cerrar"); }
+}
+
+Object.assign(Ventana.prototype, conRegistro);
+
+const v = new Ventana();
+v.abrir();
+v.cerrar();
+console.log(v.historial().length); // 2</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Regla práctica:</strong> prefiere herencia solo cuando tengas una relación clara de "es un" y la jerarquía sea estable (pocos niveles). Usa composición cuando necesites combinar comportamientos de forma flexible o cuando la jerarquía de herencia se vuelva un árbol de Navidad.</p>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="encapsulamiento.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Encapsulamiento</span>
+      </a>
+      <a class="topic-pager__link next" href="../asincronia/event-loop.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Call Stack, Event Loop, Microtasks/Macrotasks</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

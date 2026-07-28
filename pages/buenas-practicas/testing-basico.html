@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Testing básico — JS Master</title>
+<meta name="description" content="Introducción a testing con Jest/Vitest: unit tests, describe, it, expect y mocks básicos.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="testing-basico">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[6] buenas prácticas y herramientas</a>
+      <span class="sep">/</span>
+      <span class="current">testing básico</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[43]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Testing básico</h1>
+      <p class="topic-header__lede">Los tests no son un lujo ni algo que se añade al final. Son la red de seguridad que te permite refactorizar sin miedo y la documentación viva de lo que tu código debería hacer.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>¿Por qué testear?</h2>
+      <p>Un test automático verifica que un fragmento de código se comporta como esperas. Sin tests, confías en que "funciona porque lo probé a mano". Con tests, tienes una suite que puedes ejecutar en segundos y que detecta si algo se rompe después de un cambio. En proyectos de más de un desarrollador o que evolucionan con el tiempo, los tests son tan importantes como el código de producción.</p>
+
+      <h2>Jest y Vitest</h2>
+      <p>Jest es el framework de testing más popular para JavaScript. Vitest es su competidor moderno, diseñado para proyectos con Vite, con una API casi idéntica. Ambos comparten la misma sintaxis básica: <code>describe</code> para agrupar, <code>it</code> o <code>test</code> para cada caso, y <code>expect</code> para las aserciones.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>suma.test.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function sumar(a, b) {
+  return a + b;
+}
+
+describe('sumar', () => {
+  it('suma dos números positivos', () => {
+    expect(sumar(2, 3)).toBe(5);
+  });
+
+  it('suma un número negativo y uno positivo', () => {
+    expect(sumar(-1, 5)).toBe(4);
+  });
+});</code></pre>
+      </div>
+
+      <h2>Matchers comunes</h2>
+      <p>Los matchers son los métodos que usas sobre <code>expect</code> para verificar valores. Cada uno está pensado para un tipo de aserción distinto.</p>
+
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Matcher</th><th>Qué verifica</th><th>Ejemplo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>toBe()</code></td><td>Igualdad estricta (<code>===</code>)</td><td><code>expect(1 + 1).toBe(2)</code></td></tr>
+            <tr><td><code>toEqual()</code></td><td>Igualdad profunda (objetos/arrays)</td><td><code>expect({a:1}).toEqual({a:1})</code></td></tr>
+            <tr><td><code>toBeTruthy()</code></td><td>Valor truthy en booleano</td><td><code>expect('hola').toBeTruthy()</code></td></tr>
+            <tr><td><code>toBeFalsy()</code></td><td>Valor falsy</td><td><code>expect(0).toBeFalsy()</code></td></tr>
+            <tr><td><code>toContain()</code></td><td>Un array contiene un elemento</td><td><code>expect([1,2,3]).toContain(2)</code></td></tr>
+            <tr><td><code>toThrow()</code></td><td>Una función lanza un error</td><td><code>expect(() => f()).toThrow()</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>matchers-ejemplos.test.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">describe('matchers útiles', () => {
+  it('toEqual para objetos', () => {
+    const obj = { nombre: 'Ana', edad: 30 };
+    expect(obj).toEqual({ nombre: 'Ana', edad: 30 });
+  });
+
+  it('toContain en arrays', () => {
+    const frutas = ['manzana', 'pera', 'uva'];
+    expect(frutas).toContain('pera');
+  });
+
+  it('toThrow para errores', () => {
+    const lanzarError = () => { throw new Error('fail'); };
+    expect(lanzarError).toThrow('fail');
+  });
+});</code></pre>
+      </div>
+
+      <h2>Setup y teardown</h2>
+      <p>Cuando varios tests necesitan el mismo estado inicial, usa <code>beforeEach</code> / <code>afterEach</code> (o <code>beforeAll</code> / <code>afterAll</code>). Así evitas repetir código y cada test parte de un estado conocido.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>setup.test.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let usuarios;
+
+beforeEach(() => {
+  usuarios = [];
+});
+
+it('agrega un usuario', () => {
+  usuarios.push('Ana');
+  expect(usuarios).toContain('Ana');
+});
+
+it('empieza vacío cada test', () => {
+  expect(usuarios).toHaveLength(0);
+});</code></pre>
+      </div>
+
+      <h2>Mocks básicos</h2>
+      <p>Un mock reemplaza una función real para controlar su comportamiento y verificar que fue llamada con los argumentos esperados. <code>jest.fn()</code> es la forma más simple.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>mock.test.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const enviarEmail = jest.fn();
+
+function registrarUsuario(email, notificar) {
+  notificar(email);
+  return { email, registrado: true };
+}
+
+it('llama al callback de notificación con el email', () => {
+  const resultado = registrarUsuario('ana@test.com', enviarEmail);
+  expect(enviarEmail).toHaveBeenCalledWith('ana@test.com');
+  expect(resultado.registrado).toBe(true);
+});</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>TDD vs test después:</strong> TDD (Test-Driven Development) propone escribir el test antes que el código. No es obligatorio, pero tiene una ventaja: te obliga a pensar en el diseño y el contrato de la función antes de implementarla. Si recién empiezas con tests, escribir los tests después de tener el código es un buen punto de partida. Lo importante es que existan.</p>
+      </div>
+
+      <p>Saber testear te da confianza para refactorizar, y es el prerrequisito para integrar herramientas de CI/CD. Pero cuando un test falla y no entiendes por qué, el debugging entra en juego.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="manejo-de-errores.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Manejo de errores</span>
+      </a>
+      <a class="topic-pager__link next" href="debugging-devtools.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Debugging con DevTools</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

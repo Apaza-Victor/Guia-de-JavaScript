@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Objetos literales — JS Master</title>
+<meta name="description" content="Objetos en JavaScript: sintaxis literal, propiedades, métodos, acceso con corchetes y shorthand.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="objetos-literales">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[1] estructuras de datos</a>
+      <span class="sep">/</span>
+      <span class="current">objetos literales</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[12]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1>Objetos literales</h1>
+      <p class="topic-header__lede">Los objetos son el mecanismo principal de JavaScript para agrupar datos relacionados. Con la sintaxis literal puedes crear desde una simple configuración hasta modelos de datos complejos sin necesidad de clases.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Sintaxis de objeto literal</h2>
+      <p>Un objeto literal se define con llaves <code>{ }</code> y contiene pares clave-valor. Las claves pueden ser cadenas o símbolos; los valores pueden ser cualquier tipo, incluyendo otros objetos y funciones.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>objeto-literal.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const usuario = {
+  nombre: "Ana",
+  edad: 28,
+  activo: true,
+  direccion: {
+    ciudad: "Madrid",
+    codigoPostal: "28001"
+  },
+  saludar: function () {
+    return `Hola, soy ${this.nombre}`;
+  }
+};</code></pre>
+      </div>
+
+      <h2>Acceso a propiedades: dot vs bracket</h2>
+      <p>Hay dos formas de acceder a una propiedad. <code>punto</code> es más legible, pero el <strong>corchete</strong> permite usar variables y claves con caracteres especiales.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>acceso.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const usuario = { nombre: "Ana", "edad-persona": 28 };
+
+console.log(usuario.nombre);        // "Ana"
+console.log(usuario["edad-persona"]); // 28
+
+const clave = "nombre";
+console.log(usuario[clave]);        // "Ana" — acceso dinámico</code></pre>
+      </div>
+
+      <h2>Property shorthand</h2>
+      <p>Cuando el nombre de la variable coincide con la clave que quieres usar, puedes omitir el valor y escribir solo la clave. Es azúcar sintáctico muy usado en la práctica.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>shorthand.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const nombre = "Carlos";
+const edad = 30;
+
+// Sin shorthand
+const a = { nombre: nombre, edad: edad };
+
+// Con shorthand
+const b = { nombre, edad };
+
+console.log(b); // { nombre: "Carlos", edad: 30 }</code></pre>
+      </div>
+
+      <h2>Computed properties</h2>
+      <p>Puedes usar una expresión entre corchetes como nombre de clave en la definición del objeto. Esto se llama <em>computed property</em>.</p>
+
+      <div class="code-block">
+        <div class="code-block__block">
+          <span>computed.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const prefijo = "user_";
+const id = 42;
+
+const usuario = {
+  [prefijo + id]: "activo",
+  [`${prefijo}rol`]: "admin"
+};
+
+console.log(usuario); // { user_42: "activo", user_rol: "admin" }</code></pre>
+      </div>
+
+      <h2>Recorrer objetos: <code>Object.keys</code>, <code>Object.values</code>, <code>Object.entries</code></h2>
+      <p>Estos métodos estáticos devuelven arrays con las claves, valores o pares clave-valor del objeto, respectivamente. Son la forma limpia de iterar sobre objetos.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>object-keys-values.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const producto = { nombre: "Laptop", precio: 1200, stock: 5 };
+
+console.log(Object.keys(producto));
+// ["nombre", "precio", "stock"]
+
+console.log(Object.values(producto));
+// ["Laptop", 1200, 5]
+
+console.log(Object.entries(producto));
+// [["nombre", "Laptop"], ["precio", 1200], ["stock", 5]]</code></pre>
+      </div>
+
+      <h2><code>Object.assign</code></h2>
+      <p>Copia las propiedades de uno o más objetos fuente a un objeto destino. Se usa para combinar objetos o clonar superficialmente.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>object-assign.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const defaults = { modo: "claro", idioma: "es" };
+const usuario = { idioma: "en" };
+
+const config = Object.assign({}, defaults, usuario);
+console.log(config); // { modo: "claro", idioma: "en" }</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><code>Object.assign</code> hace copia superficial. Para objetos anidados, considera <code>structuredClone</code> o spread operator con objetos (lo veremos en Spread / Rest).</p>
+      </div>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="arrays-y-metodos.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Arrays y métodos</span>
+      </a>
+      <a class="topic-pager__link next" href="destructuring.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Destructuring</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

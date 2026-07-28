@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proxy y Reflect — JS Master</title>
+<meta name="description" content="Proxy para interceptar operaciones de objetos y Reflect para aplicar defaults.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="proxy-reflect">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[5] javascript moderno (es6+)</a>
+      <span class="sep">/</span>
+      <span class="current">proxy y reflect</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[39]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Proxy y Reflect</h1>
+      <p class="topic-header__lede">Proxy te permite interceptar y personalizar operaciones fundamentales sobre objetos (lectura, escritura, llamadas a funciones, etc.). Reflect proporciona los comportamientos por defecto para esas mismas operaciones, funcionando como la contraparte "normal" de los traps de Proxy.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Qué es un Proxy</h2>
+      <p>Un Proxy envuelve un objeto <em>target</em> y te permite definir <em>traps</em> (funciones manejadoras) que se ejecutan cuando se realizan ciertas operaciones sobre él. No modificas el objeto original, sino que interceptas el acceso a través del proxy.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>proxy-basico.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const target = { mensaje: 'hola' };
+
+const proxy = new Proxy(target, {
+  get(objeto, propiedad) {
+    console.log(`Leyendo "${propiedad}"`);
+    return objeto[propiedad];
+  }
+});
+
+console.log(proxy.mensaje);
+// Leyendo "mensaje"
+// "hola"</code></pre>
+      </div>
+
+      <h2>Reflect: el default de cada trap</h2>
+      <p><code>Reflect</code> exporta métodos estáticos con el comportamiento por defecto de las operaciones del lenguaje. En lugar de hacer <code>objeto[prop]</code> dentro de un trap, usamos <code>Reflect.get(objeto, prop)</code> — más seguro y predecible.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>reflect-como-default.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const proxy = new Proxy(target, {
+  get(objeto, propiedad, receptor) {
+    console.log(`Acceso a: ${propiedad}`);
+    return Reflect.get(objeto, propiedad, receptor);
+  }
+});</code></pre>
+      </div>
+
+      <h2>Traps más comunes</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Trap</th><th>Dispara cuando…</th><th>Reflect equivalente</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>get</code></td><td>se lee una propiedad</td><td><code>Reflect.get()</code></td></tr>
+            <tr><td><code>set</code></td><td>se asigna una propiedad</td><td><code>Reflect.set()</code></td></tr>
+            <tr><td><code>has</code></td><td>se usa <code>in</code></td><td><code>Reflect.has()</code></td></tr>
+            <tr><td><code>deleteProperty</code></td><td>se usa <code>delete</code></td><td><code>Reflect.deleteProperty()</code></td></tr>
+            <tr><td><code>apply</code></td><td>se llama a una función</td><td><code>Reflect.apply()</code></td></tr>
+            <tr><td><code>construct</code></td><td>se usa <code>new</code></td><td><code>Reflect.construct()</code></td></tr>
+            <tr><td><code>ownKeys</code></td><td><code>Object.keys()</code> o <code>for...in</code></td><td><code>Reflect.ownKeys()</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Validación con set</h2>
+      <p>Un uso clásico de Proxy es validar datos antes de asignarlos a un objeto. El trap <code>set</code> puede rechazar la asignación devolviendo <code>false</code> (o lanzando un error).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>validacion.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const usuario = new Proxy({}, {
+  set(objeto, propiedad, valor, receptor) {
+    if (propiedad === 'edad' && (typeof valor !== 'number' || valor < 0)) {
+      throw new Error('La edad debe ser un número positivo');
+    }
+    return Reflect.set(objeto, propiedad, valor, receptor);
+  }
+});
+
+usuario.edad = 25;  // ✅
+console.log(usuario.edad); // 25
+// usuario.edad = -5; // ❌ Error</code></pre>
+      </div>
+
+      <h2>Logging automático</h2>
+      <p>Proxy permite añadir logging a todas las operaciones de un objeto sin modificar su código interno — ideal para debugging o auditoría.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>logging.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function crearLogger(target) {
+  return new Proxy(target, {
+    get(objeto, prop, receptor) {
+      console.log(`[GET] ${String(prop)}`);
+      return Reflect.get(objeto, prop, receptor);
+    },
+    set(objeto, prop, valor, receptor) {
+      console.log(`[SET] ${String(prop)} = ${valor}`);
+      return Reflect.set(objeto, prop, valor, receptor);
+    }
+  });
+}
+
+const datos = crearLogger({ nombre: 'Ana' });
+datos.nombre;       // [GET] nombre
+datos.edad = 30;    // [SET] edad = 30</code></pre>
+      </div>
+
+      <h2>Caché con Proxy</h2>
+      <p>Puedes usar Proxy para cachear resultados de funciones computacionalmente costosas.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>cache.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function crearCache(fn) {
+  const cache = new Map();
+  return new Proxy(fn, {
+    apply(target, thisArg, args) {
+      const clave = JSON.stringify(args);
+      if (cache.has(clave)) {
+        console.log('Cache hit');
+        return cache.get(clave);
+      }
+      const resultado = Reflect.apply(target, thisArg, args);
+      cache.set(clave, resultado);
+      return resultado;
+    }
+  });
+}
+
+const fib = crearCache((n) => n <= 1 ? n : fib(n - 1) + fib(n - 2));
+console.log(fib(10)); // 55 (calcula)
+console.log(fib(10)); // 55 (cache hit)</code></pre>
+      </div>
+
+      <h2>Proxy con construct (interceptar new)</h2>
+      <p>El trap <code>construct</code> intercepta llamadas con <code>new</code>, permitiendo controlar la creación de instancias.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>construct.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function Usuario(nombre) {
+  this.nombre = nombre;
+}
+
+const ProxyUsuario = new Proxy(Usuario, {
+  construct(target, args, newTarget) {
+    console.log(`Creando usuario: ${args[0]}`);
+    const instancia = Reflect.construct(target, args, newTarget);
+    instancia.creadoEn = new Date();
+    return instancia;
+  }
+});
+
+const u = new ProxyUsuario('Ana');
+// Creando usuario: Ana
+console.log(u.nombre);    // "Ana"
+console.log(u.creadoEn);  // fecha actual</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>No abuses de Proxy.</strong> Cada operación interceptada añade overhead de rendimiento. Para validación de esquemas considera bibliotecas como Zod o Yup; para observabilidad usa herramientas específicas. Proxy es más lento que el acceso directo a propiedades, así que úsalo solo cuando necesites su poder de intercepción.</p>
+      </div>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="symbols.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Symbols</span>
+      </a>
+      <a class="topic-pager__link next" href="../buenas-practicas/clean-code.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Clean Code aplicado a JS</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

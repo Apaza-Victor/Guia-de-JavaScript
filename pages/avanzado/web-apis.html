@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web APIs — JS Master</title>
+<meta name="description" content="LocalStorage, IndexedDB, Geolocation, WebSockets y Service Workers en el navegador.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="web-apis">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[7] avanzado / rumbo a experto</a>
+      <span class="sep">/</span>
+      <span class="current">web APIs</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[49]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 9 min de lectura</span>
+      </div>
+      <h1>Web APIs</h1>
+      <p class="topic-header__lede">El navegador expone decenas de APIs que van mucho más allá del DOM. Desde almacenar datos en el cliente hasta comunicación bidireccional en tiempo real, estas herramientas convierten a JS en un lenguaje capaz de construir aplicaciones completas.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>LocalStorage y SessionStorage</h2>
+      <p>Son la forma más simple de persistir datos en el navegador. Solo guardan strings, pero con <code>JSON.stringify</code> y <code>JSON.parse</code> almacenas objetos fácilmente.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>storage.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">localStorage.setItem('tema', 'oscuro');
+console.log(localStorage.getItem('tema')); // "oscuro"
+localStorage.removeItem('tema');
+localStorage.clear();
+
+// Objetos
+const user = { nombre: 'Ana' };
+localStorage.setItem('user', JSON.stringify(user));
+const parsed = JSON.parse(localStorage.getItem('user'));</code></pre>
+      </div>
+
+      <h2>IndexedDB</h2>
+      <p>Una base de datos NoSQL del lado del cliente para grandes volúmenes de datos estructurados. La API es asíncrona y basada en eventos, más compleja que localStorage pero mucho más potente.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>indexeddb.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const request = indexedDB.open('MiDB', 1);
+
+request.onupgradeneeded = (event) => {
+  const db = event.target.result;
+  db.createObjectStore('usuarios', { keyPath: 'id' });
+};
+
+request.onsuccess = (event) => {
+  const db = event.target.result;
+  const tx = db.transaction('usuarios', 'readwrite');
+  tx.objectStore('usuarios').add({ id: 1, nombre: 'Ana' });
+};</code></pre>
+      </div>
+
+      <h2>Geolocation API</h2>
+      <p>Accede a la ubicación del dispositivo (si el usuario lo permite). Útil para mapas, check-ins o contenido contextual.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>geolocation.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">navigator.geolocation.getCurrentPosition(
+  (pos) => {
+    const { latitude, longitude } = pos.coords;
+    console.log(`Lat: ${latitude}, Lon: ${longitude}`);
+  },
+  (err) => console.error(err.message)
+);</code></pre>
+      </div>
+
+      <h2>WebSockets</h2>
+      <p>Permiten comunicación bidireccional persistente entre el cliente y el servidor. Ideales para chats, notificaciones en tiempo real o juegos multijugador.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>websocket.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const ws = new WebSocket('wss://ejemplo.com/chat');
+
+ws.onopen = () => ws.send('Hola servidor');
+ws.onmessage = (event) => console.log('Recibido:', event.data);
+ws.onclose = () => console.log('Conexión cerrada');</code></pre>
+      </div>
+
+      <h2>Service Workers</h2>
+      <p>Scripts que el navegador ejecuta en segundo plano, separados de la página. Permiten interceptar peticiones de red, cachear recursos y habilitar la experiencia offline.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>sw.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Registro
+navigator.serviceWorker.register('/sw.js');
+
+// sw.js
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open('v1').then(cache =>
+      cache.addAll(['/', '/index.html', '/app.js'])
+    )
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request)
+      .then(resp => resp || fetch(e.request))
+  );
+});</code></pre>
+      </div>
+
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Tecnología</th><th>Tipo</th><th>Capacidad</th><th>Persistencia</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Cookies</td><td>Texto</td><td>4 KB</td><td>Configurable</td></tr>
+            <tr><td>localStorage</td><td>Clave-valor</td><td>5-10 MB</td><td>Ilimitada</td></tr>
+            <tr><td>IndexedDB</td><td>NoSQL</td><td>Prácticamente ilimitada</td><td>Ilimitada</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Storage vs Cache.</strong> localStorage y IndexedDB almacenan datos de aplicación (JSON, archivos); la Cache API (usada por Service Workers) almacena respuestas HTTP. Cada uno tiene su propósito — no uses uno para lo que corresponde al otro.</p>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="closures-avanzados.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Closures avanzados</span>
+      </a>
+      <a class="topic-pager__link next" href="seguridad-en-js.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Seguridad en JS</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

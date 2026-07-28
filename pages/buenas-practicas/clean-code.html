@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clean Code aplicado a JS — JS Master</title>
+<meta name="description" content="Nombres significativos, funciones pequeñas, evitar side effects y principios de código limpio en JavaScript.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="clean-code">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[6] buenas prácticas y herramientas</a>
+      <span class="sep">/</span>
+      <span class="current">clean code aplicado a js</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[40]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Clean Code aplicado a JS</h1>
+      <p class="topic-header__lede">El código se lee muchas más veces de las que se escribe. Aplicar principios de código limpio no es obsesión estética: es la diferencia entre un proyecto que da miedo tocar y uno que da gusto mantener.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Nombres que comunican intención</h2>
+      <p>El primer principio de código limpio es poner nombres que revelen la intención. Una variable llamada <code>d</code> no dice nada; <code>diasRestantes</code> lo dice todo. Lo mismo aplica a funciones: <code>calcularTotal()</code> es mejor que <code>calc()</code>, y <code>enviarNotificacion()</code> es mejor que <code>proc()</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>nombres-significativos.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Mal
+const d = new Date();
+const arr = [1, 2, 3];
+function pr(x) { console.log(x); }
+
+// Bien
+const fechaActual = new Date();
+const numerosPendientes = [1, 2, 3];
+function imprimirResultado(valor) { console.log(valor); }</code></pre>
+      </div>
+
+      <p>Usa nombres pronunciables y buscables. Evita abreviaturas crípticas (<code>usrCtrl</code>) o nombres de una letra fuera de un bucle (<code>i</code>, <code>j</code> están bien en <code>for</code>).</p>
+
+      <h2>Funciones pequeñas y de una sola responsabilidad</h2>
+      <p>Una función debería hacer una sola cosa y hacerla bien. Si tu función tiene más de 15-20 líneas o puedes describirla con un "y" (<em>"calcula el total y envía el email"</em>), probablemente deberías dividirla.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>funcion-responsabilidad-unica.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Mal: hace tres cosas
+function procesarPedido(pedido) {
+  const total = pedido.items.reduce((sum, i) => sum + i.precio, 0);
+  const response = fetch('/api/pagos', { method: 'POST', body: JSON.stringify({ total }) });
+  enviarEmail(pedido.usuario, 'Pedido confirmado');
+  return response;
+}
+
+// Bien: cada función tiene un propósito
+function calcularTotal(items) {
+  return items.reduce((sum, i) => sum + i.precio, 0);
+}
+
+function cobrarPedido(total) {
+  return fetch('/api/pagos', { method: 'POST', body: JSON.stringify({ total }) });
+}
+
+function procesarPedido(pedido) {
+  const total = calcularTotal(pedido.items);
+  return cobrarPedido(total);
+}</code></pre>
+      </div>
+
+      <h2>Evitar side effects</h2>
+      <p>Una función que modifica una variable externa o muta un argumento sin avisar genera bugs difíciles de rastrear. Prefiere funciones puras: dado el mismo input, siempre devuelven el mismo output sin modificar nada fuera.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>sin-side-effects.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Mal: muta el array original
+function agregarItem(lista, item) {
+  lista.push(item);
+  return lista;
+}
+
+// Bien: devuelve un nuevo array
+function agregarItem(lista, item) {
+  return [...lista, item];
+}</code></pre>
+      </div>
+
+      <h2>Early return y evitar else complejo</h2>
+      <p>El <em>early return</em> reduce la anidación y hace que el flujo normal quede claro al final de la función. Si una función tiene <code>if/else</code> anidados, es señal de que necesita simplificarse.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>early-return.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Mal: anidado y confuso
+function validarUsuario(usuario) {
+  if (usuario) {
+    if (usuario.email) {
+      if (usuario.email.includes('@')) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
+// Bien: early returns
+function validarUsuario(usuario) {
+  if (!usuario) return false;
+  if (!usuario.email) return false;
+  return usuario.email.includes('@');
+}</code></pre>
+      </div>
+
+      <h2>Comentarios que explican "por qué", no "qué"</h2>
+      <p>El código debería explicar por sí mismo <em>qué</em> hace. Los comentarios deben reservarse para el <em>por qué</em>: decisiones de negocio, workarounds por bugs de terceros, razones históricas. Si necesitas un comentario para explicar qué hace una línea, esa línea necesita refactorizarse.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>comentarios-utiles.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Mal: comenta el qué
+// Multiplica el precio por la cantidad
+const total = precio * cantidad;
+
+// Bien: comenta el por qué
+// El descuento del 10% solo aplica en campaña de verano
+const descuento = esCampanyaVerano ? 0.1 : 0;</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Principios SOLID en JS:</strong> aunque SOLID nació para la POO clásica, sus principios se aplican muy bien en JavaScript. El más útil en el día a día es el Principio de Responsabilidad Única (SRP): una clase o función debe tener una sola razón para cambiar. Los otros cuatro (Open/Closed, Liskov, Segregación de Interfaces, Inversión de Dependencias) aparecen cuando empiezas a diseñar sistemas más grandes con clases o módulos.</p>
+      </div>
+
+      <h2>Consistencia por encima de todo</h2>
+      <p>Da igual si prefieres comillas simples o dobles, punto y coma o no, espacios o tabs: lo importante es elegir una convención y mantenerla en todo el proyecto. Para eso existen herramientas como ESLint y Prettier, que veremos en el siguiente tema.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="../es6-plus/proxy-reflect.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Proxy y Reflect</span>
+      </a>
+      <a class="topic-pager__link next" href="eslint-prettier.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">ESLint y Prettier</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

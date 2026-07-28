@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web Components — JS Master</title>
+<meta name="description" content="Custom Elements, Shadow DOM y HTML Templates: componentes nativos del navegador.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="web-components">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[7] avanzado / rumbo a experto</a>
+      <span class="sep">/</span>
+      <span class="current">web components</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[52]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Web Components</h1>
+      <p class="topic-header__lede">Los Web Components son un conjunto de tecnologías nativas del navegador que permiten crear componentes reutilizables sin frameworks. Custom Elements, Shadow DOM y HTML Templates forman el estándar.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Custom Elements</h2>
+      <p>Un Custom Element es una etiqueta HTML personalizada. Se define creando una clase que extiende <code>HTMLElement</code> y registrándola con <code>customElements.define</code>. Su nombre debe llevar un guion medio (kebab-case) para diferenciarlo de los elementos nativos.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>custom-element.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">class SaludoCard extends HTMLElement {
+  constructor() {
+    super();
+    this.innerHTML = `
+      <div style="border:1px solid #ddd;padding:1rem;">
+        <h3>${this.getAttribute('nombre') || 'Invitado'}</h3>
+        <p>${this.getAttribute('mensaje') || 'Bienvenido'}</p>
+      </div>
+    `;
+  }
+}
+customElements.define('saludo-card', SaludoCard);</code></pre>
+      </div>
+
+      <p>Uso en HTML:</p>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>index.html</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-html">&lt;saludo-card nombre="Ana" mensaje="Bienvenida al curso"&gt;&lt;/saludo-card&gt;</code></pre>
+      </div>
+
+      <h2>Lifecycle callbacks</h2>
+      <p>El navegador invoca métodos automáticos durante el ciclo de vida del elemento:</p>
+      <ul>
+        <li><code>connectedCallback</code> — cuando se inserta en el DOM</li>
+        <li><code>disconnectedCallback</code> — cuando se elimina del DOM</li>
+        <li><code>attributeChangedCallback</code> — cuando cambia un atributo observado</li>
+        <li><code>observedAttributes</code> — array estático con los atributos a observar</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>lifecycle.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">class MiElemento extends HTMLElement {
+  static get observedAttributes() {
+    return ['estado'];
+  }
+
+  connectedCallback() {
+    console.log('Conectado al DOM');
+    this.actualizar();
+  }
+
+  attributeChangedCallback(nombre, viejo, nuevo) {
+    if (viejo !== nuevo) this.actualizar();
+  }
+
+  actualizar() {
+    this.textContent = `Estado: ${this.getAttribute('estado')}`;
+  }
+}
+
+customElements.define('mi-elemento', MiElemento);</code></pre>
+      </div>
+
+      <h2>Shadow DOM</h2>
+      <p>El Shadow DOM proporciona encapsulación: el CSS y el DOM del componente quedan aislados del resto de la página. No hay fugas de estilos ni conflictos con selectores externos.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>shadow-dom.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">class Tooltip extends HTMLElement {
+  constructor() {
+    super();
+    const shadow = this.attachShadow({ mode: 'open' });
+    shadow.innerHTML = `
+      <style>
+        span { background: #333; color: #fff;
+               padding: 4px 8px; border-radius: 4px; }
+      </style>
+      <slot></slot>
+      <span>${this.getAttribute('texto')}</span>
+    `;
+  }
+}
+customElements.define('mi-tooltip', Tooltip);</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Shadow DOM y estilos.</strong> El CSS dentro del Shadow DOM no afecta al exterior y viceversa. Si necesitas que estilos globales penetren el shadow, usa <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part" target="_blank" rel="noopener">CSS <code>::part()</code></a> o <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/::slotted" target="_blank" rel="noopener"><code>::slotted()</code></a>.</p>
+      </div>
+
+      <h2>HTML Templates</h2>
+      <p>La etiqueta <code>&lt;template&gt;</code> guarda HTML que no se renderiza hasta que se clona e inserta. Es ideal para definir la estructura de un componente sin que se vea en la página.</p>
+
+      <div class="code-block">
+        <div class="code-block__block">
+          <span>template.html</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-html">&lt;template id="card-template"&gt;
+  &lt;style&gt;
+    .card { border: 1px solid #ccc; padding: 1rem; }
+    .card h3 { margin: 0 0 0.5rem; }
+  &lt;/style&gt;
+  &lt;div class="card"&gt;
+    &lt;h3&gt;&lt;/h3&gt;
+    &lt;p&gt;&lt;slot&gt;&lt;/slot&gt;&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>template.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const template = document.getElementById('card-template');
+const clone = template.content.cloneNode(true);
+clone.querySelector('h3').textContent = 'Título';
+document.body.appendChild(clone);</code></pre>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="rendimiento-y-optimizacion.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Rendimiento y optimización</span>
+      </a>
+      <a class="topic-pager__link next" href="introduccion-typescript.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Introducción a TypeScript</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

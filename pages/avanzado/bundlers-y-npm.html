@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bundlers y npm — JS Master</title>
+<meta name="description" content="Vite, Webpack, npm: bundlers modernos, package.json y gestión de dependencias.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="bundlers-y-npm">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[7] avanzado / rumbo a experto</a>
+      <span class="sep">/</span>
+      <span class="current">bundlers y npm</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[54]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1>Bundlers modernos y npm</h1>
+      <p class="topic-header__lede">Ningún proyecto JS serio se escribe hoy sin un gestor de paquetes y un bundler. npm maneja las dependencias; Webpack, Vite y compañía empaquetan el código para producción.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>npm: el gestor de paquetes</h2>
+      <p>npm (Node Package Manager) es el gestor de paquetes por defecto de Node.js. Con <code>npm init</code> creas un <code>package.json</code> y con <code>npm install &lt;paquete&gt;</code> añades dependencias a tu proyecto.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>comandos-basicos.sh</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-bash">npm init -y                    # crea package.json rápido
+npm install lodash             # instala como dependencia
+npm install -D vitest          # instala como devDependency
+npm uninstall lodash           # elimina el paquete
+npm run dev                    # ejecuta el script "dev"</code></pre>
+      </div>
+
+      <p>El <code>package.json</code> es el corazón del proyecto: contiene metadatos, scripts, dependencias y configuración. El <code>package-lock.json</code> fija las versiones exactas para que todos los entornos instalen lo mismo.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>package.json</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-json">{
+  "name": "mi-proyecto",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  }
+}</code></pre>
+      </div>
+
+      <h2>Semver</h2>
+      <p>npm usa versionado semántico (semver): <code>MAJOR.MINOR.PATCH</code>. El <code>^</code> permite actualizaciones de minor y patch, <code>~</code> solo patch, y sin prefijo fija la versión exacta.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>semver.json</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-json">{
+  "^4.17.21": "compatible con 4.x.x",
+  "~4.17.21": "solo parches 4.17.x",
+  "4.17.21": "exactamente esa versión"
+}</code></pre>
+      </div>
+
+      <h2>Bundlers: de módulos a bundles</h2>
+      <p>Los bundlers toman tus archivos JS (y CSS, imágenes, etc.) y los empaquetan en uno o varios archivos optimizados para el navegador. Resuelven imports, eliminan código muerto (<em>tree shaking</em>) y aplican transformaciones.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>webpack-vs-vite.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Webpack: config explícita
+// webpack.config.js
+module.exports = {
+  entry: './src/index.js',
+  output: { filename: 'bundle.js' },
+  module: { rules: [
+    { test: /\.css$/, use: ['style-loader', 'css-loader'] }
+  ]}
+};
+
+// Vite: zero-config, usa ESM nativo en dev
+// vite.config.js (opcional)
+import { defineConfig } from 'vite';
+export default defineConfig({
+  plugins: []
+});</code></pre>
+      </div>
+
+      <h2>Módulos vs Bundles</h2>
+      <p>En desarrollo, Vite sirve los módulos ES nativos sin empaquetar — el navegador los importa directamente. En producción, Vite usa Rollup para empaquetar y optimizar. Webpack, en cambio, empaqueta tanto en dev como en producción.</p>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Para proyectos nuevos, empezá con Vite.</strong> Es más rápido, tiene configuración mínima y una experiencia de desarrollo excelente. Webpack sigue siendo una opción sólida para proyectos legacy o que necesitan configuraciones muy específicas.</p>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="introduccion-typescript.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Introducción a TypeScript</span>
+      </a>
+      <a class="topic-pager__link next" href="introduccion-frameworks.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Introducción a frameworks</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

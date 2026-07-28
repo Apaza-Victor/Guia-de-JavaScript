@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Call Stack, Event Loop — JS Master</title>
+<meta name="description" content="Cómo funciona el Event Loop, Call Stack, Microtasks (Promesas) y Macrotasks (setTimeout).">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="event-loop">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[4] asincronía</a>
+      <span class="sep">/</span>
+      <span class="current">call stack, event loop</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[29]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 9 min de lectura</span>
+      </div>
+      <h1>Call Stack, Event Loop, Microtasks / Macrotasks</h1>
+      <p class="topic-header__lede">JavaScript tiene un solo hilo (<em>single thread</em>), pero gracias al Event Loop puede manejar miles de operaciones sin bloquearse. Entender cómo se orquestan el Call Stack, las Microtasks y las Macrotasks es la clave para predecir el orden exacto en que se ejecuta tu código asíncrono.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Call Stack: la pila de ejecución</h2>
+      <p>El Call Stack es una estructura LIFO (<em>Last In, First Out</em>) donde se apilan las funciones a medida que se invocan. Cada vez que llamas a una función, su contexto se agrega al tope de la pila; cuando termina, se desapila. Si la pila se desborda (<em>stack overflow</em>), aparece el clásico error <code>Maximum call stack size exceeded</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>call-stack.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function a() { b(); }
+function b() { c(); }
+function c() { console.trace(); }
+
+a();
+// El trace muestra a → b → c apiladas en orden</code></pre>
+      </div>
+
+      <h2>Web APIs y el Task Queue</h2>
+      <p>Cuando ejecutas <code>setTimeout</code>, <code>fetch</code> o un listener de evento, el motor delega la tarea a las <strong>Web APIs</strong> del navegador. Esas APIs colocan el <em>callback</em> en la <strong>Task Queue</strong> (o Macrotask Queue) cuando la condición se cumple. El Event Loop revisa constantemente si el Call Stack está vacío y, si lo está, toma la primera tarea de la cola y la empuja al stack.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>macrotask-set-timeout.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">console.log("1");
+
+setTimeout(() => console.log("2"), 0);
+
+console.log("3");
+// Salida: 1, 3, 2</code></pre>
+      </div>
+
+      <p>El <code>setTimeout</code> con 0 milisegundos no se ejecuta inmediatamente: su callback va a la Task Queue y espera a que el Call Stack esté vacío.</p>
+
+      <h2>Microtask Queue: las promesas se saltan la fila</h2>
+      <p>Las <strong>Microtasks</strong> (promesas, <code>MutationObserver</code>, <code>queueMicrotask</code>) tienen una cola separada con mayor prioridad. El Event Loop, antes de sacar una macrotask, vacía por completo la cola de microtasks. Por eso las promesas resueltas se ejecutan antes que cualquier <code>setTimeout</code> pendiente.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>microtask-vs-macrotask.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">console.log("1");
+
+setTimeout(() => console.log("2"), 0);
+
+Promise.resolve().then(() => console.log("3"));
+
+console.log("4");
+// Salida: 1, 4, 3, 2</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>El orden exacto:</strong> código síncrono (Call Stack) → Microtasks (Promesas) → Macrotasks (setTimeout, eventos). Por eso el <code>"3"</code> de la promesa sale antes que el <code>"2"</code> del <code>setTimeout</code>.</p>
+      </div>
+
+      <h2>El ciclo completo del Event Loop</h2>
+      <ol>
+        <li>Ejecuta todo el código síncrono del Call Stack.</li>
+        <li>Saca y ejecuta una macrotask de la Task Queue (si el stack está vacío).</li>
+        <li>Vacía toda la cola de Microtasks antes de pasar a la siguiente macrotask.</li>
+        <li>Renderiza la interfaz si es necesario (requestAnimationFrame, paint).</li>
+        <li>Vuelve al paso 2.</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>orden-completo.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">console.log("A");
+
+setTimeout(() => console.log("B"), 0);
+
+Promise.resolve()
+  .then(() => console.log("C"))
+  .then(() => console.log("D"));
+
+console.log("E");
+// Salida: A, E, C, D, B</code></pre>
+      </div>
+
+      <h2>Resumen visual</h2>
+      <p>El Event Loop prioriza siempre el código síncrono, luego las microtasks (promesas) y por último las macrotasks (timers, eventos). Dominar este flujo te permite razonar sobre cualquier orden de ejecución, incluso en los casos más anidados.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="../poo/polimorfismo-composicion.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Polimorfismo y composición vs herencia</span>
+      </a>
+      <a class="topic-pager__link next" href="callbacks.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Callbacks y "callback hell"</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

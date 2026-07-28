@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manejo de errores asíncronos — JS Master</title>
+<meta name="description" content="Try/catch en async/await, .catch en promesas y errores no capturados (unhandled rejection).">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="errores-asincronos">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[4] asincronía</a>
+      <span class="sep">/</span>
+      <span class="current">manejo de errores asíncronos</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[34]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 6 min de lectura</span>
+      </div>
+      <h1>Manejo de errores asíncronos</h1>
+      <p class="topic-header__lede">El código asíncrono introduce una dificultad extra: un error puede ocurrir después de que el bloque <code>try/catch</code> original ya terminó. Aprender a capturar errores en promesas, <code>async/await</code> y eventos globales es esencial para aplicaciones robustas.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>try/catch con async/await</h2>
+      <p>La forma más directa: la función <code>async</code> envuelve la lógica en un <code>try/catch</code> igual que código síncrono. Si cualquier <code>await</code> dentro del bloque falla, salta al <code>catch</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>try-catch-async.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">async function cargarDatos() {
+  try {
+    const respuesta = await fetch("/api/datos");
+    if (!respuesta.ok) throw new Error(`HTTP ${respuesta.status}`);
+    return await respuesta.json();
+  } catch (error) {
+    console.error("Error al cargar datos:", error.message);
+    return { error: true, datos: [] };
+  }
+}</code></pre>
+      </div>
+
+      <h2>.catch() en promesas encadenadas</h2>
+      <p>Con promesas, el <code>.catch()</code> al final captura cualquier error que ocurra en cualquier <code>.then()</code> anterior, igual que un <code>try/catch</code> abarcaría todo el bloque.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>catch-encadenado.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">fetch("/api/usuarios")
+  .then(respuesta => {
+    if (!respuesta.ok) throw new Error("Error HTTP");
+    return respuesta.json();
+  })
+  .then(usuarios => console.log(usuarios))
+  .catch(error => console.error("Algo falló:", error.message));</code></pre>
+      </div>
+
+      <h2>Unhandled Promise Rejection</h2>
+      <p>Cuando una promesa se rechaza y no tiene un <code>.catch()</code> asociado (ni un <code>await</code> dentro de un <code>try/catch</code>), el motor genera un <strong>unhandled promise rejection</strong>. En el navegador aparece como advertencia en la consola; en Node.js puede terminar el proceso.</p>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>Siempre captura tus promesas.</strong> Una promesa rechazada sin manejar no solo ensucia la consola: en Node.js desde la versión 15, el proceso termina con código de error. Si trabajas con promesas sueltas, asígnales siempre un <code>.catch()</code>.</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>unhandled-rejection.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Esto genera un unhandled rejection
+Promise.reject(new Error("Fallo sin captura"));
+
+// Esto lo captura correctamente
+Promise.reject(new Error("Fallo capturado"))
+  .catch(error => console.error(error.message));</code></pre>
+      </div>
+
+      <h2>Capturar errores globalmente</h2>
+      <p>Para evitar que una rejection no capturada se escape, puedes escuchar el evento global <code>unhandledrejection</code> en el navegador, o <code>process.on('unhandledRejection')</code> en Node.js. También existe <code>window.onerror</code> para errores síncronos no capturados.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>global-error-handler.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// En el navegador
+window.addEventListener("unhandledrejection", event => {
+  console.error("Promesa no capturada:", event.reason);
+  event.preventDefault(); // evita la advertencia en consola
+});
+
+// En Node.js
+process.on("unhandledRejection", (motivo, promesa) => {
+  console.error("Rejection no manejada:", motivo);
+});</code></pre>
+      </div>
+
+      <h2>Errores en callbacks asíncronos</h2>
+      <p>Un <code>try/catch</code> alrededor de una función que usa callbacks no captura errores que ocurran dentro del callback asíncrono, porque ese callback se ejecuta después, fuera del contexto del <code>try</code>. Este es un error clásico.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>try-catch-fallido.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">try {
+  setTimeout(() => {
+    throw new Error("Error dentro del callback");
+  }, 1000);
+} catch (error) {
+  // Esto NUNCA se ejecuta
+  console.error("Error capturado:", error);
+}
+
+// El error anterior rompe el programa porque el throw
+// ocurre fuera del contexto del try/catch</code></pre>
+      </div>
+
+      <p>La lección: los errores asíncronos solo se capturan con herramientas pensadas para asincronía — promesas, <code>async/await</code> o los eventos globales. Con esto cierras el nivel de asincronía y estás listo para explorar módulos en ES6+.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="fetch-api.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">fetch API</span>
+      </a>
+      <a class="topic-pager__link next" href="../es6-plus/modulos.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Módulos import / export</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

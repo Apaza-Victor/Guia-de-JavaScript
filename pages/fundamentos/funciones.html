@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Funciones — JS Master</title>
+<meta name="description" content="Declaración de funciones, expresiones, arrow functions, parámetros y valores de retorno.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="funciones">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[0] fundamentos</a>
+      <span class="sep">/</span>
+      <span class="current">funciones</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[9]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Funciones: declaración, expresión y arrow functions</h1>
+      <p class="topic-header__lede">Las funciones son el centro de la reutilización en JavaScript. No solo agrupan lógica, sino que también definen <em>scope</em> y se comportan de forma distinta según cómo las declares.</p>
+    </header>
+
+    <article class="article-content">
+      <h2><code>function</code> declaration</h2>
+      <p>La forma clásica de declarar una función. Una característica clave: estas funciones sufren <em>hoisting</em> completo, lo que significa que puedes llamarlas antes de declararlas en el código.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>declaration.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">saludar("Ana"); // ✅ funciona por hoisting
+
+function saludar(nombre) {
+  return "Hola, " + nombre;
+}
+
+console.log(saludar("Ana")); // "Hola, Ana"</code></pre>
+      </div>
+
+      <h2><code>function</code> expression</h2>
+      <p>Asignas una función a una variable. Aquí no hay hoisting del valor: la variable se declara pero no se asigna hasta la línea donde se define.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>expression.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">console.log(sumar(2, 3)); // ❌ ReferenceError: cannot access before initialization
+
+const sumar = function (a, b) {
+  return a + b;
+};
+
+console.log(sumar(2, 3)); // 5</code></pre>
+      </div>
+
+      <h2>Arrow functions</h2>
+      <p>Introducidas en ES6, tienen sintaxis más corta y <strong>no crean su propio <code>this</code></strong> —heredan el del contexto donde se definen. Ideales para callbacks y métodos funcionales.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>arrow.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Forma explícita (con return)
+const multiplicar = (a, b) => {
+  return a * b;
+};
+
+// Forma compacta (return implícito)
+const multiplicarCompacto = (a, b) => a * b;
+
+console.log(multiplicar(4, 3));      // 12
+console.log(multiplicarCompacto(4, 3)); // 12
+
+// Un solo parámetro: paréntesis opcionales
+const cuadrado = x => x ** 2;
+console.log(cuadrado(5)); // 25</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Return implícito:</strong> cuando el cuerpo de una arrow function es una sola expresión sin llaves, esa expresión se devuelve automáticamente. Para devolver un objeto literal, envuélvelo entre paréntesis: <code>() => ({ clave: "valor" })</code>.</p>
+      </div>
+
+      <h2>Parámetros</h2>
+      <p>JavaScript permite valores por defecto para parámetros y el operador <code>rest</code> para capturar argumentos sobrantes en un array.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>parametros.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Parámetro por defecto
+function saludar(nombre = "visitante") {
+  return "Hola, " + nombre;
+}
+console.log(saludar());         // "Hola, visitante"
+console.log(saludar("Ana"));    // "Hola, Ana"
+
+// Rest operator
+function sumarTodos(...numeros) {
+  return numeros.reduce((acc, n) => acc + n, 0);
+}
+console.log(sumarTodos(1, 2, 3, 4)); // 10</code></pre>
+      </div>
+
+      <h2>Comparación rápida</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Característica</th><th>Declaration</th><th>Expression</th><th>Arrow</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Hoisting</td><td>completo</td><td>solo declaración</td><td>solo declaración</td></tr>
+            <tr><td><code>this</code></td><td>propio</td><td>propio</td><td>heredado</td></tr>
+            <tr><td>Sintaxis mínima</td><td>5 líneas</td><td>5 líneas</td><td>1 línea</td></tr>
+            <tr><td>Uso como método</td><td>sí</td><td>sí</td><td>no (this léxico)</td></tr>
+            <tr><td>constructor (<code>new</code>)</td><td>sí</td><td>sí</td><td>no</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="bucles.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Bucles</span>
+      </a>
+      <a class="topic-pager__link next" href="scope-y-hoisting.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Scope y Hoisting</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

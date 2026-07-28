@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variables: var, let, const — JS Master</title>
+<meta name="description" content="Diferencias entre var, let y const en JavaScript: scope, hoisting y cuándo usar cada una.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="variables">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[0] fundamentos</a>
+      <span class="sep">/</span>
+      <span class="current">variables</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[3]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 6 min de lectura</span>
+      </div>
+      <h1>Variables: <code>var</code>, <code>let</code> y <code>const</code></h1>
+      <p class="topic-header__lede">Antes de escribir cualquier lógica, JavaScript necesita un lugar donde guardar valores. Estas tres palabras clave hacen exactamente eso, pero con reglas de alcance y reasignación muy distintas — y elegir mal puede causar bugs difíciles de rastrear.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>¿Qué es una variable?</h2>
+      <p>Una variable es un espacio con nombre donde guardas un valor para usarlo más adelante. En JavaScript se declaran con <code>var</code>, <code>let</code> o <code>const</code>, y la diferencia entre ellas no es solo de sintaxis: cambia dónde existen (<em>scope</em>) y si pueden reasignarse.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>ejemplo.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let nombre = "Ana";
+const edad = 28;
+var activo = true;
+
+console.log(nombre, edad, activo);
+// "Ana" 28 true</code></pre>
+      </div>
+
+      <h2>const: no se reasigna</h2>
+      <p><code>const</code> crea una referencia constante. No puedes reasignarla, pero si guarda un objeto o array, su <strong>contenido</strong> sí puede cambiar — lo que es constante es la referencia, no el valor interno.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>const-no-es-inmutable.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const usuario = { nombre: "Ana" };
+usuario.nombre = "Lucía"; // ✅ funciona: modificas el contenido
+console.log(usuario); // { nombre: "Lucía" }
+
+usuario = {}; // ❌ TypeError: Assignment to constant variable.</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Regla práctica:</strong> usa <code>const</code> por defecto. Solo cambia a <code>let</code> cuando sepas que vas a reasignar el valor (un contador, un acumulador, etc.).</p>
+      </div>
+
+      <h2>let: variables con scope de bloque</h2>
+      <p><code>let</code> sí permite reasignación, y —al igual que <code>const</code>— vive únicamente dentro del bloque <code>{ }</code> donde se declaró.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>scope-de-bloque.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">if (true) {
+  let mensaje = "hola";
+  console.log(mensaje); // "hola"
+}
+
+console.log(mensaje); // ❌ ReferenceError: mensaje is not defined</code></pre>
+      </div>
+
+      <h2>var: la forma antigua (y por qué evitarla)</h2>
+      <p><code>var</code> existe desde el JavaScript original. Su scope es de <strong>función</strong>, no de bloque, lo que provoca comportamientos poco intuitivos como este:</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>problema-de-var.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">if (true) {
+  var mensaje = "hola";
+}
+
+console.log(mensaje); // "hola" — ¡se filtró fuera del bloque!
+
+for (var i = 0; i < 3; i++) {}
+console.log(i); // 3 — var "sobrevive" al bucle</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><code>var</code> también sufre <em>hoisting</em> con valor inicial <code>undefined</code>, lo que permite usarla antes de declararla sin error visible. Por eso en código moderno casi nunca se usa <code>var</code>.</p>
+      </div>
+
+      <h2>Comparación rápida</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Característica</th><th><code>var</code></th><th><code>let</code></th><th><code>const</code></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Scope</td><td>función</td><td>bloque</td><td>bloque</td></tr>
+            <tr><td>Reasignable</td><td>sí</td><td>sí</td><td>no</td></tr>
+            <tr><td>Hoisting</td><td>sí (con <code>undefined</code>)</td><td>sí (temporal dead zone)</td><td>sí (temporal dead zone)</td></tr>
+            <tr><td>Uso recomendado</td><td>evitar</td><td>cuando reasignas</td><td>por defecto</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Ejercicio propuesto</h2>
+      <p>Reescribe este fragmento reemplazando cada <code>var</code> por <code>let</code> o <code>const</code> según corresponda, y explica en un comentario por qué elegiste cada una:</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>ejercicio.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">var precioBase = 100;
+var descuento = 0.1;
+var precioFinal = precioBase - (precioBase * descuento);
+console.log(precioFinal);</code></pre>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="vincular-js-en-html.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Cómo enlazar JS en HTML</span>
+      </a>
+      <a class="topic-pager__link next" href="tipos-de-datos.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Tipos de datos</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

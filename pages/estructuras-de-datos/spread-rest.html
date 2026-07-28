@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spread / Rest operator — JS Master</title>
+<meta name="description" content="El operador ... como spread y como rest: expandir arrays, copiar objetos y agrupar parámetros.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="spread-rest">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[1] estructuras de datos</a>
+      <span class="sep">/</span>
+      <span class="current">spread / rest</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[14]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 6 min de lectura</span>
+      </div>
+      <h1>Spread / Rest operator (<code>...</code>)</h1>
+      <p class="topic-header__lede">El operador <code>...</code> tiene dos caras: como <em>spread</em> expande elementos; como <em>rest</em> los agrupa. Aunque la sintaxis es la misma, el contexto determina su comportamiento.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Spread en arrays</h2>
+      <p>El spread <code>...</code> expande los elementos de un array en lugares donde se esperan múltiples valores, como dentro de otro array o como argumentos de una función.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>spread-array.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const frutas = ["manzana", "pera"];
+const mas = ["uva", ...frutas, "naranja"];
+console.log(mas); // ["uva", "manzana", "pera", "naranja"]
+
+// Clonar array
+const copia = [...frutas];
+
+// Convertir string a array
+console.log([..."hola"]); // ["h", "o", "l", "a"]</code></pre>
+      </div>
+
+      <h2>Spread en objetos</h2>
+      <p>Permite copiar propiedades de un objeto dentro de otro. El orden importa: las propiedades posteriores sobrescriben a las anteriores si hay conflicto de clave.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>spread-objeto.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const base = { nombre: "Ana", edad: 28 };
+const extras = { edad: 30, ciudad: "Madrid" };
+
+const usuario = { ...base, ...extras };
+console.log(usuario);
+// { nombre: "Ana", edad: 30, ciudad: "Madrid" }</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p>El spread en objetos hace copia superficial (<em>shallow copy</em>). Si una propiedad es otro objeto, ambos comparten la misma referencia.</p>
+      </div>
+
+      <h2>Rest parameters</h2>
+      <p>Cuando <code>...</code> aparece en la definición de una función, agrupa los argumentos restantes en un array. Es la forma moderna de manejar número variable de argumentos.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>rest-params.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function sumar(...numeros) {
+  return numeros.reduce((acc, n) => acc + n, 0);
+}
+
+console.log(sumar(1, 2, 3));    // 6
+console.log(sumar(10, 20, 30, 40)); // 100
+
+// Rest después de parámetros fijos
+function listar(prefijo, ...items) {
+  return items.map(i => `${prefijo}: ${i}`);
+}</code></pre>
+      </div>
+
+      <h2>Rest en destructuring</h2>
+      <p>Puedes usar rest para agrupar los elementos o propiedades sobrantes al hacer destructuring.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>rest-destructuring.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Con arrays
+const [primero, ...resto] = [1, 2, 3, 4];
+console.log(primero); // 1
+console.log(resto);   // [2, 3, 4]
+
+// Con objetos
+const { nombre, ...datos } = { nombre: "Ana", edad: 28, ciudad: "Madrid" };
+console.log(nombre); // "Ana"
+console.log(datos);  // { edad: 28, ciudad: "Madrid" }</code></pre>
+      </div>
+
+      <h2>Comparación: Spread vs Rest</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Contexto</th><th>Rol</th><th>Ejemplo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>En array literal / llamada función</td><td>Spread — expande</td><td><code>[...arr]</code> / <code>Math.max(...nums)</code></td></tr>
+            <tr><td>En objeto literal</td><td>Spread — copia propiedades</td><td><code>{...obj}</code></td></tr>
+            <tr><td>En parámetro de función</td><td>Rest — agrupa argumentos</td><td><code>function f(...args)</code></td></tr>
+            <tr><td>En destructuring</td><td>Rest — agrupa resto</td><td><code>[a, ...b] = arr</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p>La regla mental: <strong>spread</strong> ocurre en el lado derecho (construcción/expansión), <strong>rest</strong> en el lado izquierdo (declaración/destructuring).</p>
+      </div>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="destructuring.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Destructuring</span>
+      </a>
+      <a class="topic-pager__link next" href="template-literals.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Template literals</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

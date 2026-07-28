@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manipulación del DOM — JS Master</title>
+<meta name="description" content="Crear, modificar y eliminar elementos del DOM: innerHTML, textContent, createElement, appendChild.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="manipulacion-del-dom">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[2] dom y eventos</a>
+      <span class="sep">/</span>
+      <span class="current">manipulación del dom</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[19]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Manipulación del DOM</h1>
+      <p class="topic-header__lede">Saber seleccionar elementos es el primer paso. El verdadero poder llega cuando creas, modificas y eliminas nodos del árbol. Aquí es donde una página estática se convierte en una interfaz dinámica.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>innerHTML vs textContent</h2>
+      <p>La forma más directa de cambiar el contenido de un elemento es con <code>innerHTML</code> o <code>textContent</code>. La diferencia es fundamental: <code>innerHTML</code> interpreta el string como HTML, mientras que <code>textContent</code> lo trata como texto plano.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>inner-vs-text.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const div = document.querySelector('#output');
+
+div.textContent = '&lt;strong&gt;Hola&lt;/strong&gt;';
+// Muestra: &lt;strong&gt;Hola&lt;/strong&gt; (literal)
+
+div.innerHTML = '&lt;strong&gt;Hola&lt;/strong&gt;';
+// Muestra: Hola (en negrita)</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>Peligro de XSS:</strong> nunca uses <code>innerHTML</code> con datos que vengan del usuario, una API o cualquier fuente externa sin sanitizarlos primero. Un string como <code>&lt;img src=x onerror="alert('XSS')"&gt;</code> ejecutaría código malicioso. Prefiere <code>textContent</code> cuando solo necesites texto.</p>
+      </div>
+
+      <h2>createElement y appendChild</h2>
+      <p>Para crear elementos desde cero usa <code>document.createElement</code>. Una vez creado lo insertas con <code>appendChild</code> o con el método más flexible <code>append</code>, que acepta varios nodos y strings.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>crear-elemento.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const li = document.createElement('li');
+li.textContent = 'Item nuevo';
+
+const lista = document.querySelector('ul');
+lista.appendChild(li);
+
+// append permite varios argumentos
+lista.append('texto suelto', document.createElement('span'));</code></pre>
+      </div>
+
+      <h2>insertBefore</h2>
+      <p>Si necesitas insertar un elemento en una posición específica —no al final— usa <code>insertBefore</code>. Recibe el nodo a insertar y el nodo de referencia.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>insert-before.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const lista = document.querySelector('ul');
+const primero = lista.firstElementChild;
+
+const nuevo = document.createElement('li');
+nuevo.textContent = 'Al inicio';
+
+lista.insertBefore(nuevo, primero);</code></pre>
+      </div>
+
+      <h2>Eliminar elementos</h2>
+      <p>Puedes eliminar un nodo con <code>removeChild</code> (desde el padre) o con el método directo <code>remove</code>, más moderno y legible.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>eliminar-nodos.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const item = document.querySelector('.item');
+
+// Forma antigua
+item.parentElement.removeChild(item);
+
+// Forma moderna
+item.remove();</code></pre>
+      </div>
+
+      <h2>classList: add, remove, toggle</h2>
+      <p>Para manipular clases CSS de forma limpia usa la propiedad <code>classList</code>. Es mucho más cómoda que jugar con <code>className</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>classlist.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const el = document.querySelector('.card');
+
+el.classList.add('active');          // añade una clase
+el.classList.remove('hidden');       // quita una clase
+el.classList.toggle('visible');      // si existe la quita, si no la añade
+el.classList.contains('active');     // true / false
+el.classList.replace('old', 'new');  // reemplaza una clase por otra</code></pre>
+      </div>
+
+      <h2>setAttribute y style</h2>
+      <p>Para modificar atributos HTML o estilos en línea tienes <code>setAttribute</code> y la propiedad <code>style</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>atributos-y-estilos.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const img = document.querySelector('img');
+img.setAttribute('alt', 'Descripción');
+img.setAttribute('src', 'nueva-imagen.jpg');
+
+const caja = document.querySelector('.caja');
+caja.style.backgroundColor = '#ff5722';
+caja.style.borderRadius = '8px';
+
+// Para leer estilos computados usa getComputedStyle
+const estilos = getComputedStyle(caja);
+console.log(estilos.backgroundColor);</code></pre>
+      </div>
+
+      <p>Con estas herramientas ya puedes construir una interfaz que reaccione a datos y a interacciones del usuario. En el próximo tema verás cómo capturar esas interacciones con eventos.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="seleccion-del-dom.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">El DOM: selección de elementos</span>
+      </a>
+      <a class="topic-pager__link next" href="eventos.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Eventos</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

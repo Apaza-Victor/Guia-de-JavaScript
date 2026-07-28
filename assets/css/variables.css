@@ -1,0 +1,90 @@
+/* =========================================================
+   variables.css — Design tokens (light + dark)
+   ========================================================= */
+
+:root {
+  /* ---- Color: light (default) ---- */
+  --paper: #f6f7f4;
+  --paper-raised: #ffffff;
+  --paper-sunken: #eef0ea;
+  --ink: #12151c;
+  --ink-soft: #545b66;
+  --ink-faint: #8b909b;
+  --line: #dfe2dc;
+  --line-strong: #c7cbc2;
+
+  --brand: #d8b323;        /* JS yellow, muted for light bg */
+  --brand-ink: #3a2f00;    /* texto sobre fondo --brand */
+  --brand-soft: #f5ecc4;   /* fondo suave con tinte de marca */
+
+  --signal: #2c48c7;       /* azul de interacción / links */
+  --signal-soft: #e4e9fb;
+
+  --ok: #1e8e5a;
+  --warn: #b5590a;
+  --danger: #c22b2b;
+
+  --code-keyword: #a626a4;
+  --code-string: #2c8a4b;
+  --code-func: #2c48c7;
+  --code-number: #b5590a;
+  --code-comment: #8b909b;
+
+  --shadow: 0 1px 2px rgba(18, 21, 28, 0.04), 0 8px 24px rgba(18, 21, 28, 0.06);
+  --shadow-lift: 0 4px 10px rgba(18, 21, 28, 0.08), 0 16px 40px rgba(18, 21, 28, 0.10);
+
+  /* ---- Tipografía ---- */
+  --font-display: 'Space Mono', 'Courier New', monospace;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-code: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ---- Layout ---- */
+  --header-h: 64px;
+  --sidebar-w: 272px;
+  --toc-w: 220px;
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 16px;
+  --container-max: 1320px;
+
+  /* ---- Motion ---- */
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --speed-fast: 150ms;
+  --speed-base: 260ms;
+}
+
+/* ---- Color: dark ---- */
+[data-theme="dark"] {
+  --paper: #0d0f14;
+  --paper-raised: #151822;
+  --paper-sunken: #10121a;
+  --ink: #edeef0;
+  --ink-soft: #a2a8b4;
+  --ink-faint: #6b7080;
+  --line: #262a35;
+  --line-strong: #343a48;
+
+  --brand: #f0db4f;
+  --brand-ink: #1a1500;
+  --brand-soft: #2a2410;
+
+  --signal: #7c93ff;
+  --signal-soft: #1a2040;
+
+  --ok: #3ecf8e;
+  --warn: #e6a23c;
+  --danger: #e5484d;
+
+  --code-keyword: #c9a6ff;
+  --code-string: #7ee2a8;
+  --code-func: #93a6ff;
+  --code-number: #f0b16a;
+  --code-comment: #6b7080;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-lift: 0 4px 10px rgba(0, 0, 0, 0.4), 0 20px 48px rgba(0, 0, 0, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --speed-fast: 0ms; --speed-base: 0ms; }
+}

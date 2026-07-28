@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Symbols — JS Master</title>
+<meta name="description" content="Symbol como tipo primitivo único, Symbol.for, well-known symbols y casos de uso.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="symbols">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[5] javascript moderno (es6+)</a>
+      <span class="sep">/</span>
+      <span class="current">symbols</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[38]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 6 min de lectura</span>
+      </div>
+      <h1>Symbols</h1>
+      <p class="topic-header__lede">Symbol es el sexto tipo primitivo de JavaScript, introducido en ES6 para crear identificadores únicos e inmutables. Sirven como claves de propiedades que no colisionan con otras — ideales para metadatos, protocolos internos y evitar conflictos de nombres.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Crear Symbols</h2>
+      <p>Cada llamada a <code>Symbol()</code> genera un valor único, aunque se le pase una descripción que solo sirve para depuración.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>symbol-basico.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const sym1 = Symbol('id');
+const sym2 = Symbol('id');
+
+console.log(sym1 === sym2); // false — siempre son únicos
+console.log(sym1.toString()); // "Symbol(id)"</code></pre>
+      </div>
+
+      <h2>Symbols como claves de objeto</h2>
+      <p>Los Symbols pueden usarse como propiedades de objetos. A diferencia de las claves de tipo <em>string</em>, no aparecen en <code>for...in</code> ni en <code>Object.keys()</code>, lo que las hace útiles para propiedades "ocultas" o de metadatos.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>symbols-como-clave.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const ID = Symbol('id');
+const usuario = {
+  nombre: 'Ana',
+  [ID]: 12345
+};
+
+console.log(usuario.nombre);          // "Ana"
+console.log(usuario[ID]);             // 12345
+console.log(Object.keys(usuario));    // ["nombre"] — Symbol no aparece
+console.log(Object.getOwnPropertySymbols(usuario)); // [ Symbol(id) ]</code></pre>
+      </div>
+
+      <h2>Symbol.for() y Symbol.keyFor()</h2>
+      <p><code>Symbol.for(clave)</code> crea o recupera un Symbol desde un registro global. Si ya existe un Symbol con esa clave, devuelve el mismo. <code>Symbol.keyFor()</code> obtiene la clave asociada a un Symbol global.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>symbol-for.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const globalA = Symbol.for('app.version');
+const globalB = Symbol.for('app.version');
+
+console.log(globalA === globalB); // true — mismo Symbol global
+console.log(Symbol.keyFor(globalA)); // "app.version"
+
+const local = Symbol('app.version');
+console.log(local === globalA); // false — local ≠ global</code></pre>
+      </div>
+
+      <h2>Well-known Symbols</h2>
+      <p>JavaScript define Symbols incorporados que permiten personalizar el comportamiento de objetos. El más conocido es <code>Symbol.iterator</code>, que hace que un objeto sea iterable.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>symbol-iterator.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const rango = {
+  desde: 1,
+  hasta: 3,
+  [Symbol.iterator]() {
+    let actual = this.desde;
+    const fin = this.hasta;
+    return {
+      next() {
+        return actual <= fin
+          ? { value: actual++, done: false }
+          : { done: true };
+      }
+    };
+  }
+};
+
+console.log([...rango]); // [1, 2, 3]</code></pre>
+      </div>
+
+      <p>Otros well-known symbols incluyen <code>Symbol.toStringTag</code> (personaliza <code>Object.prototype.toString</code>) y <code>Symbol.toPrimitive</code> (controla la conversión a primitivo).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>otros-well-known.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">class MiClase {
+  get [Symbol.toStringTag]() {
+    return 'MiClasePersonalizada';
+  }
+}
+console.log(Object.prototype.toString.call(new MiClase()));
+// "[object MiClasePersonalizada]"
+
+// Symbol.toPrimitive — personaliza conversión a número/string
+const producto = {
+  precio: 100,
+  [Symbol.toPrimitive](tipo) {
+    if (tipo === 'number') return this.precio;
+    return `$${this.precio}`;
+  }
+};
+console.log(+producto);  // 100
+console.log(`${producto}`); // "$100"</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong><code>Symbol.iterator</code></strong> es el well-known symbol que más utilizarás. Cada vez que escribes <code>for...of</code>, <code>[...arr]</code> o <code>Array.from()</code>, JavaScript busca internamente este símbolo para saber cómo recorrer el objeto.</p>
+      </div>
+
+      <h2>Evitar colisiones en librerías</h2>
+      <p>Una aplicación práctica de Symbols es evitar colisiones de nombres al extender objetos de terceros. Al usar un Symbol como clave, te aseguras de no pisar propiedades existentes, incluso si otra librería usa la misma descripción.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>sin-colision.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const metadata = Symbol('metadata');
+const datos = { nombre: 'Ana' };
+
+// Tu librería añade metadatos sin riesgo
+datos[metadata] = { version: 1, fecha: Date.now() };
+
+// Otra librería también usa Symbol('metadata') — pero es distinto
+const otroMetadata = Symbol('metadata');
+datos[otroMetadata] = { autor: 'otro' };
+
+console.log(Object.getOwnPropertySymbols(datos).length); // 2</code></pre>
+      </div>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="generadores-iteradores.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Generadores e iteradores</span>
+      </a>
+      <a class="topic-pager__link next" href="proxy-reflect.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Proxy y Reflect</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

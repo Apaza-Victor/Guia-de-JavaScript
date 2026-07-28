@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Debugging con DevTools — JS Master</title>
+<meta name="description" content="Debugging en Chrome DevTools: breakpoints, watch, call stack, console y performance.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="debugging-devtools">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[6] buenas prácticas y herramientas</a>
+      <span class="sep">/</span>
+      <span class="current">debugging con devtools</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[44]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1>Debugging con DevTools</h1>
+      <p class="topic-header__lede">El navegador es tu aliado más potente para entender qué está pasando (y por qué no está pasando lo que esperas). Chrome DevTools ofrece un depurador completo sin instalar nada.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Console: mucho más que console.log</h2>
+      <p>El objeto <code>console</code> tiene varios métodos que dan más contexto que un <code>log</code> simple. Usa el adecuado según lo que necesites inspeccionar.</p>
+
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Método</th><th>Uso</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>console.log()</code></td><td>Valor genérico</td></tr>
+            <tr><td><code>console.debug()</code></td><td>Mensaje de depuración (oculto por defecto en consola)</td></tr>
+            <tr><td><code>console.warn()</code></td><td>Advertencia (icono amarillo)</td></tr>
+            <tr><td><code>console.error()</code></td><td>Error (icono rojo + stack trace)</td></tr>
+            <tr><td><code>console.table()</code></td><td>Arrays/objetos en formato tabla</td></tr>
+            <tr><td><code>console.time() / timeEnd()</code></td><td>Medir tiempo de ejecución</td></tr>
+            <tr><td><code>console.group() / groupEnd()</code></td><td>Agrupar mensajes en la consola</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>console-metodos.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const usuarios = [
+  { id: 1, nombre: 'Ana' },
+  { id: 2, nombre: 'Luis' },
+];
+
+console.table(usuarios);
+
+console.time('bucle');
+for (let i = 0; i < 1000000; i++) {}
+console.timeEnd('bucle');
+
+console.group('Validación');
+console.log('email: ok');
+console.warn('teléfono no verificado');
+console.groupEnd();</code></pre>
+      </div>
+
+      <h2>Breakpoints: pausa el código donde tú quieras</h2>
+      <p>Los breakpoints son la herramienta estrella del debugging. Ponen pausa la ejecución en una línea concreta para que puedas inspeccionar variables, el call stack y el scope en ese momento exacto.</p>
+
+      <ul>
+        <li><strong>Line breakpoint:</strong> haz clic en el número de línea en la pestaña Sources.</li>
+        <li><strong>Conditional breakpoint:</strong> haz clic derecho sobre el número de línea y escribe una condición (ej. <code>valor > 10</code>). Solo pausa cuando se cumple.</li>
+        <li><strong>DOM breakpoint:</strong> desde el panel Elements, en un nodo del DOM, elige "Break on" → "attribute modification" o "subtree modification".</li>
+        <li><strong>Event listener breakpoint:</strong> en Sources, despliega "Event Listener Breakpoints" y marca el evento que quieras interceptar (click, fetch, timeout, etc.).</li>
+      </ul>
+
+      <h2>Sources: el panel central</h2>
+      <p>El panel Sources te muestra el archivo que se está ejecutando. Cuando el código se pausa en un breakpoint, puedes ver:</p>
+      <ul>
+        <li><strong>Call Stack:</strong> la pila de llamadas que llevaron hasta esta línea. Te dice qué función llamó a qué función.</li>
+        <li><strong>Scope:</strong> las variables locales, de closure y globales accesibles en este punto.</li>
+        <li><strong>Watch:</strong> expresiones personalizadas que evalúas en vivo (ej. <code>usuario.nombre</code>).</li>
+      </ul>
+      <p>Desde aquí puedes avanzar línea por línea (F9), entrar a una función (F11), o saltar al siguiente breakpoint (F8).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>debugger.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function calcularDescuento(precio, porcentaje) {
+  // La palabra clave debugger actúa como breakpoint manual
+  debugger;
+  return precio - (precio * porcentaje / 100);
+}
+
+document.querySelector('button').addEventListener('click', () => {
+  const total = calcularDescuento(500, 15);
+  console.log(total);
+});</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Breakpoints vs console.log:</strong> <code>console.log</code> es rápido y útil, pero ensucia el código y requiere volver a ejecutar si olvidaste loguear algo. Los breakpoints no modifican el código, puedes añadirlos sobre la marcha, y te dan mucha más información (call stack, scope, variables en tiempo real). Para bugs complejos, los breakpoints ganan siempre.</p>
+      </div>
+
+      <h2>Network y Performance</h2>
+      <p>El panel Network es indispensable para depurar peticiones: muestra el método, la URL, el código de estado, los headers y el cuerpo de cada petición. Puedes filtrar por tipo (XHR, JS, CSS, img) y hasta simular una conexión lenta desde el throttling.</p>
+      <p>El panel Performance graba un perfil de actividad: cada función, cada layout, cada petición. Úsalo cuando el problema no es un error sino lentitud. La grabación te muestra qué operación consume más tiempo.</p>
+
+      <p>Con DevTools bajo el brazo, puedes enfrentarte a cualquier bug. La última pieza del rompecabezas de herramientas es Git, que protege tu código del caos de versiones y colaboración.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="testing-basico.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Testing básico</span>
+      </a>
+      <a class="topic-pager__link next" href="git-en-proyectos-js.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Git aplicado a proyectos JS</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

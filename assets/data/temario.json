@@ -1,0 +1,131 @@
+{
+  "niveles": [
+    {
+      "index": 0,
+      "slug": "fundamentos",
+      "titulo": "Fundamentos",
+      "dificultad": "basico",
+      "descripcion": "La base sintáctica y lógica de JavaScript, sin la cual nada más tiene sentido.",
+      "temas": [
+        { "id": 1, "slug": "que-es-javascript", "titulo": "¿Qué es JavaScript? Historia y motor V8" },
+        { "id": 2, "slug": "vincular-js-en-html", "titulo": "Cómo enlazar JS en HTML (script, defer, async)" },
+        { "id": 3, "slug": "variables", "titulo": "Variables: var, let, const" },
+        { "id": 4, "slug": "tipos-de-datos", "titulo": "Tipos de datos (primitivos vs referencia)" },
+        { "id": 5, "slug": "operadores", "titulo": "Operadores (aritméticos, comparación, lógicos, ternario)" },
+        { "id": 6, "slug": "coercion-de-tipos", "titulo": "Coerción de tipos (== vs ===)" },
+        { "id": 7, "slug": "condicionales", "titulo": "Estructuras condicionales (if/else, switch)" },
+        { "id": 8, "slug": "bucles", "titulo": "Bucles (for, while, do...while, for...of, for...in)" },
+        { "id": 9, "slug": "funciones", "titulo": "Funciones: declaración, expresión, arrow functions" },
+        { "id": 10, "slug": "scope-y-hoisting", "titulo": "Scope y Hoisting" }
+      ]
+    },
+    {
+      "index": 1,
+      "slug": "estructuras-de-datos",
+      "titulo": "Estructuras de datos",
+      "dificultad": "basico",
+      "descripcion": "Cómo JavaScript organiza y transforma colecciones de información.",
+      "temas": [
+        { "id": 11, "slug": "arrays-y-metodos", "titulo": "Arrays y métodos (map, filter, reduce, forEach, find, sort...)" },
+        { "id": 12, "slug": "objetos-literales", "titulo": "Objetos literales y propiedades" },
+        { "id": 13, "slug": "destructuring", "titulo": "Destructuring (arrays y objetos)" },
+        { "id": 14, "slug": "spread-rest", "titulo": "Spread / Rest operator" },
+        { "id": 15, "slug": "template-literals", "titulo": "Template literals" },
+        { "id": 16, "slug": "map-set", "titulo": "Map, Set, WeakMap, WeakSet" },
+        { "id": 17, "slug": "json", "titulo": "JSON: parse / stringify" }
+      ]
+    },
+    {
+      "index": 2,
+      "slug": "dom-y-eventos",
+      "titulo": "DOM y eventos",
+      "dificultad": "intermedio",
+      "descripcion": "Cómo tu código conversa con la página que el usuario ve y toca.",
+      "temas": [
+        { "id": 18, "slug": "seleccion-del-dom", "titulo": "El DOM: selección de elementos (querySelector, etc.)" },
+        { "id": 19, "slug": "manipulacion-del-dom", "titulo": "Manipulación del DOM (crear, modificar, eliminar nodos)" },
+        { "id": 20, "slug": "eventos", "titulo": "Eventos y el modelo de burbujeo/captura" },
+        { "id": 21, "slug": "delegacion-de-eventos", "titulo": "Delegación de eventos" },
+        { "id": 22, "slug": "formularios-y-validacion", "titulo": "Formularios y validación" },
+        { "id": 23, "slug": "bom", "titulo": "BOM: window, location, history, navigator" }
+      ]
+    },
+    {
+      "index": 3,
+      "slug": "poo",
+      "titulo": "Programación Orientada a Objetos",
+      "dificultad": "intermedio",
+      "descripcion": "Modelar el mundo con objetos, clases y herencia a la manera de JS.",
+      "temas": [
+        { "id": 24, "slug": "this", "titulo": "Objetos y this" },
+        { "id": 25, "slug": "prototipos", "titulo": "Prototipos y herencia prototípica" },
+        { "id": 26, "slug": "clases-es6", "titulo": "Clases ES6 (class, constructor, extends, super)" },
+        { "id": 27, "slug": "encapsulamiento", "titulo": "Encapsulamiento (#privadas, getters/setters)" },
+        { "id": 28, "slug": "polimorfismo-composicion", "titulo": "Polimorfismo y composición vs herencia" }
+      ]
+    },
+    {
+      "index": 4,
+      "slug": "asincronia",
+      "titulo": "Asincronía",
+      "dificultad": "intermedio",
+      "descripcion": "El corazón de JavaScript: cómo hace varias cosas sin bloquearse.",
+      "temas": [
+        { "id": 29, "slug": "event-loop", "titulo": "Call Stack, Event Loop, Microtasks/Macrotasks" },
+        { "id": 30, "slug": "callbacks", "titulo": "Callbacks y 'callback hell'" },
+        { "id": 31, "slug": "promesas", "titulo": "Promesas (then, catch, finally, Promise.all/race/allSettled)" },
+        { "id": 32, "slug": "async-await", "titulo": "async / await" },
+        { "id": 33, "slug": "fetch-api", "titulo": "fetch API y consumo de APIs REST" },
+        { "id": 34, "slug": "errores-asincronos", "titulo": "Manejo de errores asíncronos" }
+      ]
+    },
+    {
+      "index": 5,
+      "slug": "es6-plus",
+      "titulo": "JavaScript moderno (ES6+)",
+      "dificultad": "avanzado",
+      "descripcion": "Sintaxis y features que definen el JS que se escribe hoy.",
+      "temas": [
+        { "id": 35, "slug": "modulos", "titulo": "Módulos (import / export)" },
+        { "id": 36, "slug": "optional-chaining-nullish", "titulo": "Optional chaining (?.) y Nullish coalescing (??)" },
+        { "id": 37, "slug": "generadores-iteradores", "titulo": "Generadores e iteradores (function*, yield)" },
+        { "id": 38, "slug": "symbols", "titulo": "Symbols" },
+        { "id": 39, "slug": "proxy-reflect", "titulo": "Proxy y Reflect" }
+      ]
+    },
+    {
+      "index": 6,
+      "slug": "buenas-practicas",
+      "titulo": "Buenas prácticas y herramientas",
+      "dificultad": "avanzado",
+      "descripcion": "Escribir JS que otros (y tu yo futuro) puedan mantener.",
+      "temas": [
+        { "id": 40, "slug": "clean-code", "titulo": "Clean Code aplicado a JS" },
+        { "id": 41, "slug": "eslint-prettier", "titulo": "ESLint y Prettier" },
+        { "id": 42, "slug": "manejo-de-errores", "titulo": "Manejo de errores (try/catch/finally, errores personalizados)" },
+        { "id": 43, "slug": "testing-basico", "titulo": "Testing básico (Jest / Vitest)" },
+        { "id": 44, "slug": "debugging-devtools", "titulo": "Debugging con DevTools" },
+        { "id": 45, "slug": "git-en-proyectos-js", "titulo": "Control de versiones con Git aplicado a proyectos JS" }
+      ]
+    },
+    {
+      "index": 7,
+      "slug": "avanzado",
+      "titulo": "Avanzado / rumbo a experto",
+      "dificultad": "avanzado",
+      "descripcion": "Los temas que separan a quien usa JS de quien lo entiende a fondo.",
+      "temas": [
+        { "id": 46, "slug": "patrones-de-diseno", "titulo": "Patrones de diseño en JS (Module, Singleton, Observer, Factory)" },
+        { "id": 47, "slug": "programacion-funcional", "titulo": "Programación funcional (funciones puras, inmutabilidad, composición)" },
+        { "id": 48, "slug": "closures-avanzados", "titulo": "Closures avanzados y aplicaciones prácticas" },
+        { "id": 49, "slug": "web-apis", "titulo": "Web APIs (LocalStorage, IndexedDB, Geolocation, WebSockets, Service Workers)" },
+        { "id": 50, "slug": "seguridad-en-js", "titulo": "Seguridad en JS (XSS, CORS, sanitización)" },
+        { "id": 51, "slug": "rendimiento-y-optimizacion", "titulo": "Rendimiento y optimización (debounce, throttle, lazy loading)" },
+        { "id": 52, "slug": "web-components", "titulo": "Web Components (Custom Elements, Shadow DOM)" },
+        { "id": 53, "slug": "introduccion-typescript", "titulo": "Introducción a TypeScript" },
+        { "id": 54, "slug": "bundlers-y-npm", "titulo": "Bundlers modernos (Vite, Webpack) y npm" },
+        { "id": 55, "slug": "introduccion-frameworks", "titulo": "Introducción a frameworks (React/Vue) como siguiente paso" }
+      ]
+    }
+  ]
+}

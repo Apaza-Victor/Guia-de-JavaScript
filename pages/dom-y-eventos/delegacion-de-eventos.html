@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Delegación de eventos — JS Master</title>
+<meta name="description" content="Delegación de eventos: un solo listener para múltiples elementos dinámicos.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="delegacion-de-eventos">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[2] dom y eventos</a>
+      <span class="sep">/</span>
+      <span class="current">delegación de eventos</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[21]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 5 min de lectura</span>
+      </div>
+      <h1>Delegación de eventos</h1>
+      <p class="topic-header__lede">Si añades un listener a cada elemento de una lista, el rendimiento se resiente y el código se vuelve difícil de mantener. La delegación usa el burbujeo para escuchar desde un solo padre, incluso para elementos que aún no existen.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>El problema</h2>
+      <p>Imagina una lista de 100 elementos y quieres que cada uno responda al click. Si pones un <code>addEventListener</code> por cada <code>&lt;li&gt;</code>, creas 100 funciones en memoria. Si además los elementos se añaden dinámicamente, tienes que acordarte de suscribir cada nuevo nodo.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>problema.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// ❌ Ineficiente: un listener por cada item
+document.querySelectorAll('.item').forEach(item => {
+  item.addEventListener('click', () => {
+    console.log('click en', item.textContent);
+  });
+});
+
+// Los nuevos items añadidos después NO tendrán listener</code></pre>
+      </div>
+
+      <h2>La solución: delegación</h2>
+      <p>Coloca un solo listener en el contenedor padre y usa <code>event.target</code> para saber qué hijo concreto disparó el evento. Como el evento burbujea desde el hijo hasta el padre, el padre lo recibe y puedes filtrar.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>delegacion.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const lista = document.querySelector('ul');
+
+lista.addEventListener('click', e => {
+  const item = e.target.closest('li');
+  if (!item) return; // no era un &lt;li&gt;
+
+  console.log('click en', item.textContent);
+});
+
+// Ahora funciona también para &lt;li&gt; añadidos después
+const nuevo = document.createElement('li');
+nuevo.textContent = 'Dinámico';
+lista.appendChild(nuevo); // el click se capturará igual</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Usa <code>closest</code> para filtrar.</strong> <code>e.target</code> puede ser un hijo interno (como un <code>&lt;span&gt;</code> dentro del <code>&lt;li&gt;</code>). <code>closest('li')</code> sube hasta el ancestro que buscas, y si no lo encuentra devuelve <code>null</code>.</p>
+      </div>
+
+      <h2>event.target vs event.currentTarget</h2>
+      <p>Es importante distinguirlos: <code>e.target</code> es el elemento que originó el evento (donde hiciste click), mientras que <code>e.currentTarget</code> es el elemento donde está atado el listener (el padre). En delegación casi siempre quieres trabajar con <code>e.target</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>target-vs-currenttarget.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">lista.addEventListener('click', e => {
+  console.log('target:', e.target);        // el &lt;li&gt; o &lt;span&gt; clickeado
+  console.log('currentTarget:', e.currentTarget); // siempre &lt;ul&gt;
+});</code></pre>
+      </div>
+
+      <h2>Delegación en tablas</h2>
+      <p>El patrón es el mismo para estructuras más complejas como tablas. Un solo listener en <code>&lt;table&gt;</code> y filtras por el botón o celda que te interesa.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>delegacion-tabla.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">document.querySelector('table').addEventListener('click', e => {
+  const btn = e.target.closest('.btn-eliminar');
+  if (!btn) return;
+
+  const fila = btn.closest('tr');
+  fila.remove();
+});</code></pre>
+      </div>
+
+      <h2>Ventajas de la delegación</h2>
+      <ul>
+        <li><strong>Rendimiento:</strong> un solo listener en vez de cientos.</li>
+        <li><strong>Elementos dinámicos:</strong> funciona con nodos que se añadan después de registrar el listener.</li>
+        <li><strong>Menos código:</strong> no necesitas bucles para suscribir ni limpiar listeners al eliminar elementos.</li>
+        <li><strong>Menos memoria:</strong> una sola función en memoria en lugar de una por elemento.</li>
+      </ul>
+
+      <p>La delegación es uno de los patrones más prácticos del DOM moderno. En el próximo tema verás cómo aplicarlo a la validación de formularios.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="eventos.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Eventos</span>
+      </a>
+      <a class="topic-pager__link next" href="formularios-y-validacion.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Formularios y validación</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

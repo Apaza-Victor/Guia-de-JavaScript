@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coerción de tipos — JS Master</title>
+<meta name="description" content="Coerción implícita vs explícita en JavaScript y por qué usar === en lugar de ==.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="coercion-de-tipos">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[0] fundamentos</a>
+      <span class="sep">/</span>
+      <span class="current">coerción de tipos</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[6]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 6 min de lectura</span>
+      </div>
+      <h1>Coerción de tipos: <code>==</code> vs <code>===</code></h1>
+      <p class="topic-header__lede">JavaScript intenta ayudarte convirtiendo tipos automáticamente, pero esa "ayuda" es la fuente de algunos de los bugs más difíciles de encontrar. Entender cuándo y cómo ocurre la coerción te da el control sobre tu código.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>¿Qué es la coerción de tipos?</h2>
+      <p>Es la conversión automática o manual de un valor de un tipo a otro. En JavaScript hay dos tipos de coerción: <strong>implícita</strong> (el motor la hace por ti) y <strong>explícita</strong> (tú forzas la conversión con funciones como <code>String()</code>).</p>
+
+      <h2>Coerción implícita</h2>
+      <p>Ocurre cuando usas operadores como <code>==</code> o <code>+</code> con valores de distinto tipo. JavaScript decide por ti cómo convertir antes de operar.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>coercion-implicita.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">console.log(5 == "5");     // true — "5" se convierte a 5
+console.log(0 == false);    // true — false se convierte a 0
+console.log("" == 0);       // true — "" se convierte a 0
+console.log(null == undefined); // true — casos especiales
+
+// Con el operador +, si hay un string, todo se vuelve string
+console.log(1 + "2");       // "12" — número convertido a string
+console.log("3" * "2");     // 6   — strings convertidos a número</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>El problema de == :</strong> las reglas de coerción implícita son difíciles de memorizar. Por ejemplo, <code>[] == false</code> da <code>true</code> y <code>[] == ![]</code> también da <code>true</code>. Por eso en código moderno se usa <code>===</code> siempre que sea posible.</p>
+      </div>
+
+      <h2>Coerción explícita</h2>
+      <p>Tú controlas la conversión usando las funciones constructoras <code>String()</code>, <code>Number()</code> y <code>Boolean()</code>. El código es más predecible y fácil de leer.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>coercion-explicita.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let edad = "28";
+
+// Explícita: de string a número
+let numero = Number(edad);
+console.log(numero + 2); // 30
+
+// Explícita: de número a string
+let texto = String(100);
+console.log(texto.length); // 3
+
+// Explícita: a booleano
+console.log(Boolean(1));   // true
+console.log(Boolean(0));   // false
+console.log(Boolean(""));  // false
+console.log(Boolean("Hi")); // true</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Alternativas cortas:</strong> <code>+""</code> convierte a número (unario <code>+</code>), <code>"" + valor</code> convierte a string, y <code>!!valor</code> convierte a booleano. Son coerción implícita disfrazada, pero se usan mucho en código real por su brevedad.</p>
+      </div>
+
+      <h2>Comparación: <code>==</code> vs <code>===</code></h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Operador</th><th>Compara</th><th>Coerción</th><th>Ejemplo trampa</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>==</code></td><td>valor</td><td>sí</td><td><code>"" == false</code> → <code>true</code></td></tr>
+            <tr><td><code>===</code></td><td>valor y tipo</td><td>no</td><td><code>"" === false</code> → <code>false</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>La regla de oro: usa <code>===</code> por defecto. Solo recurre a <code>==</code> cuando sepas exactamente qué coerción ocurre y sea intencional —por ejemplo, comparar <code>null == undefined</code> para detectar valores nulos o indefinidos a la vez.</p>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="operadores.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Operadores</span>
+      </a>
+      <a class="topic-pager__link next" href="condicionales.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Estructuras condicionales</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

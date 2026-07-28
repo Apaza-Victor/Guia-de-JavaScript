@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Git aplicado a JS — JS Master</title>
+<meta name="description" content="Control de versiones con Git para proyectos JS: .gitignore, commits semánticos y flujo de trabajo.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="git-en-proyectos-js">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[6] buenas prácticas y herramientas</a>
+      <span class="sep">/</span>
+      <span class="current">git aplicado a proyectos js</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[45]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 6 min de lectura</span>
+      </div>
+      <h1>Git aplicado a proyectos JS</h1>
+      <p class="topic-header__lede">El código que no está versionado no existe. Git es el estándar indiscutible, y saber usarlo bien en un proyecto JavaScript marca la diferencia entre un historial útil y un caos de commits.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>.gitignore para proyectos JS</h2>
+      <p>No todo lo que está en tu carpeta debe ir al repositorio. El archivo <code>.gitignore</code> le dice a Git qué archivos ignorar. En un proyecto JavaScript típico, al menos estos:</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>.gitignore</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-bash">node_modules/
+dist/
+.env
+.env.local
+*.log
+.DS_Store
+coverage/
+.cache/</code></pre>
+      </div>
+
+      <p><code>node_modules</code> es el más obvio: no tiene sentido versionar las dependencias, se instalan con <code>npm install</code>. <code>.env</code> contiene claves y secretos que nunca deben subirse. <code>dist/</code> es la salida del build, que se genera en cada despliegue.</p>
+
+      <h2>Commits semánticos (Conventional Commits)</h2>
+      <p>Un commit bien escrito cuenta una historia. El formato Conventional Commits estandariza los mensajes para que sean legibles tanto por humanos como por herramientas automáticas (generación de changelogs, versionado semántico).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>ejemplos-de-commits</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-bash">feat: añadir validación de email en el formulario de registro
+fix: corregir error al calcular descuento con IVA incluido
+docs: actualizar README con instrucciones de instalación
+refactor: extraer lógica de pagos a servicio separado
+test: agregar tests unitarios para la función calcularTotal
+chore: actualizar dependencias</code></pre>
+      </div>
+
+      <p>La estructura es: <code>tipo(ámbito opcional): descripción</code>. Los tipos más usados son <code>feat</code> (nueva funcionalidad), <code>fix</code> (corrección de bug), <code>docs</code> (documentación), <code>refactor</code> (cambio que no añade funcionalidad ni corrige bugs), <code>test</code> (tests) y <code>chore</code> (tareas de mantenimiento).</p>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Conventional Commits + versionado semántico:</strong> si usas Conventional Commits, herramientas como <code>standard-version</code> o <code>semantic-release</code> pueden determinar automáticamente si el próximo release es major, minor o patch según los commits. <code>fix</code> incrementa patch, <code>feat</code> incrementa minor, y un <code>BREAKING CHANGE</code> incrementa major.</p>
+      </div>
+
+      <h2>Flujo de trabajo con ramas</h2>
+      <p>En un proyecto individual puedes trabajar solo en <code>main</code>, pero en equipo — o incluso solo para organizarte mejor — conviene usar ramas. Un flujo simple y efectivo:</p>
+
+      <ul>
+        <li><code>main</code> — la rama de producción. Solo recibe merges desde otras ramas.</li>
+        <li><code>dev</code> — integración de funcionalidades en desarrollo.</li>
+        <li><code>feature/nombre</code> — cada nueva funcionalidad en su propia rama, que se mergea a <code>dev</code> al terminar.</li>
+        <li><code>fix/nombre</code> — lo mismo para correcciones.</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>flujo-basico.sh</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-bash">git checkout -b feature/validar-email
+# trabajas, haces commits…
+git add .
+git commit -m "feat: añadir validación de email"
+git checkout dev
+git merge feature/validar-email
+git push origin dev</code></pre>
+      </div>
+
+      <h2>Comandos esenciales del día a día</h2>
+      <p>Más allá del <code>add/commit/push</code>, hay comandos que salvan el día:</p>
+      <ul>
+        <li><code>git log --oneline --graph</code> — historial compacto con árbol de ramas.</li>
+        <li><code>git diff</code> — cambios sin staged.</li>
+        <li><code>git stash</code> — guarda cambios temporalmente para cambiar de rama.</li>
+        <li><code>git pull --rebase</code> — integra cambios remotos sin un merge commit extra.</li>
+      </ul>
+
+      <p>Con Git dominado cierras el círculo de herramientas esenciales para cualquier desarrollador JavaScript. El siguiente nivel te espera con patrones de diseño avanzados.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="debugging-devtools.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Debugging con DevTools</span>
+      </a>
+      <a class="topic-pager__link next" href="../avanzado/patrones-de-diseno.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Patrones de diseño en JS</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

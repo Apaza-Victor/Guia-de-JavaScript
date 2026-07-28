@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Qué es JavaScript? — JS Master</title>
+<meta name="description" content="Qué es JavaScript, de dónde viene y qué hace el motor V8 cuando ejecuta tu código.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="que-es-javascript">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[0] fundamentos</a>
+      <span class="sep">/</span>
+      <span class="current">qué es javascript</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[1]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 5 min de lectura</span>
+      </div>
+      <h1>¿Qué es JavaScript?</h1>
+      <p class="topic-header__lede">JavaScript es el lenguaje que hace que una página web reaccione: valide un formulario, mueva un menú, actualice datos sin recargar. Nació para el navegador, pero hoy corre casi en cualquier lugar.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Un poco de historia</h2>
+      <p>JavaScript fue creado en 1995 por Brendan Eich en 10 días, para darle interactividad al navegador Netscape. A pesar del nombre, no tiene relación directa con Java — el nombre fue una decisión de marketing de la época. Desde entonces se estandarizó bajo el nombre <strong>ECMAScript</strong>, y cada versión anual (ES2015, ES2016...) agrega nuevas funcionalidades al lenguaje.</p>
+
+      <h2>¿Dónde se ejecuta?</h2>
+      <p>Originalmente solo en el navegador, pero hoy JavaScript corre en varios entornos:</p>
+      <ul>
+        <li><strong>Navegador</strong> — Chrome, Firefox, Safari, cada uno con su propio motor</li>
+        <li><strong>Servidor</strong> — con Node.js, fuera del navegador</li>
+        <li><strong>Apps móviles y de escritorio</strong> — con frameworks como React Native o Electron</li>
+      </ul>
+
+      <h2>El motor V8</h2>
+      <p>Un <em>motor de JavaScript</em> es el programa que lee tu código y lo ejecuta. <strong>V8</strong> es el motor de Google, usado en Chrome y en Node.js. Su trabajo, resumido, es:</p>
+      <ol>
+        <li>Parsear el código (convertirlo en una estructura que la máquina entiende)</li>
+        <li>Compilarlo a código máquina en tiempo real (JIT — <em>Just In Time</em>)</li>
+        <li>Ejecutarlo y optimizarlo mientras corre</li>
+      </ol>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>hola-mundo.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">console.log("Hola, motor V8");
+// Esto se ejecuta igual en un navegador que en Node.js</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p>No necesitas entender cómo funciona V8 por dentro para programar bien en JS — pero saber que existe te ayuda a entender por qué el mismo código puede comportarse igual en el navegador y en un servidor Node.js.</p>
+      </div>
+
+      <h2>Lo que viene</h2>
+      <p>En el siguiente tema vas a ver cómo conectar un archivo <code>.js</code> a una página HTML real, y las diferencias entre cargarlo normal, con <code>defer</code> o con <code>async</code>.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <span class="topic-pager__link prev topic-pager__empty"></span>
+      <a class="topic-pager__link next" href="vincular-js-en-html.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Cómo enlazar JS en HTML</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

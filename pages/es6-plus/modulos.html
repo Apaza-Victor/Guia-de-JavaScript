@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Módulos (import / export) — JS Master</title>
+<meta name="description" content="Módulos ES6: export e import, named exports, default exports y módulos en el navegador.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="modulos">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[5] javascript moderno (es6+)</a>
+      <span class="sep">/</span>
+      <span class="current">módulos</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[35]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1>Módulos: <code>import</code> / <code>export</code></h1>
+      <p class="topic-header__lede">Desde ES6, JavaScript tiene un sistema de módulos nativo que permite dividir el código en archivos independientes. Con <code>export</code> e <code>import</code> puedes compartir y consumir funcionalidad entre archivos sin contaminar el ámbito global.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>¿Por qué módulos?</h2>
+      <p>Antes de ES6 todo el código JS compartía el mismo scope global. Si dos archivos declaraban una variable con el mismo nombre, la segunda sobrescribía a la primera. Los módulos resuelven esto aislando cada archivo en su propio ámbito: todo lo definido dentro de un módulo es privado a menos que se exponga con <code>export</code>.</p>
+
+      <h2>Named exports</h2>
+      <p>Puedes exportar múltiples valores con nombre desde un mismo archivo usando la palabra clave <code>export</code> delante de la declaración o al final con una sentencia <code>export { }</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>matematicas.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">export const PI = 3.1416;
+
+export function sumar(a, b) {
+  return a + b;
+}
+
+function restar(a, b) {
+  return a - b;
+}
+
+export { restar };</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>app.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">import { PI, sumar, restar } from './matematicas.js';
+
+console.log(sumar(5, 3));   // 8
+console.log(PI);            // 3.1416</code></pre>
+      </div>
+
+      <h2>Default export</h2>
+      <p>Cada módulo puede tener un único <code>export default</code>, que se importa sin llaves y puede recibir cualquier nombre en el importador.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>saludo.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">export default function saludar(nombre) {
+  return `¡Hola, ${nombre}!`;
+}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>app.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">import saludar from './saludo.js';
+
+console.log(saludar('Ana')); // ¡Hola, Ana!</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Default vs named:</strong> usa <code>export default</code> cuando el módulo exporta una única funcionalidad principal (una clase, una función). Usa <em>named exports</em> cuando exportas varias utilidades relacionadas. En la práctica muchos proyectos combinan ambos.</p>
+      </div>
+
+      <h2>Renombrar imports y exports</h2>
+      <p>Tanto en la exportación como en la importación puedes usar <code>as</code> para cambiar el nombre de un valor.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>renombrar.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Renombrar al exportar
+function obtenerUsuario() { /* ... */ }
+export { obtenerUsuario as getUser };
+
+// Renombrar al importar
+import { getUser as traerUsuario } from './renombrar.js';</code></pre>
+      </div>
+
+      <h2>Importar todo (namespace)</h2>
+      <p>El patrón <code>import * as</code> agrupa todas las exportaciones de un módulo en un solo objeto.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>app.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">import * as Mat from './matematicas.js';
+
+console.log(Mat.PI);          // 3.1416
+console.log(Mat.sumar(2, 3)); // 5</code></pre>
+      </div>
+
+      <h2>Módulos en el navegador</h2>
+      <p>Para usar módulos en el navegador debes incluir el atributo <code>type="module"</code> en la etiqueta <code>&lt;script&gt;</code>. Los módulos se ejecutan en modo estricto y con carga diferida (<em>defer</em> por defecto).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>index.html</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-html">&lt;script type="module" src="app.js"&gt;&lt;/script&gt;</code></pre>
+      </div>
+
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Característica</th><th>Script clásico</th><th>Módulo ES6</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Scope</td><td>global</td><td>propio del módulo</td></tr>
+            <tr><td>Strict mode</td><td>opcional</td><td>siempre</td></tr>
+            <tr><td>Defer</td><td>manual</td><td>por defecto</td></tr>
+            <tr><td>Import/export</td><td>no soporta</td><td>soporta</td></tr>
+            <tr><td>CORS</td><td>no requiere</td><td>requiere</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p>Los módulos requieren un servidor HTTP — <code>file://</code> no funciona por restricciones CORS. Usa <code>python3 -m http.server</code> o cualquier servidor local.</p>
+      </div>
+
+      <h2>Re-exportaciones (barrel files)</h2>
+      <p>Puedes re-exportar valores de otros módulos para crear archivos "barril" que agrupen múltiples fuentes en un único punto de entrada.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>index.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">export { sumar, restar } from './matematicas.js';
+export { default as saludar } from './saludo.js';</code></pre>
+      </div>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="../asincronia/errores-asincronos.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Manejo de errores asíncronos</span>
+      </a>
+      <a class="topic-pager__link next" href="optional-chaining-nullish.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Optional chaining y Nullish coalescing</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

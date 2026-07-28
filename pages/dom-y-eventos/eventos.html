@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eventos — JS Master</title>
+<meta name="description" content="addEventListener, tipos de eventos, objeto event y el flujo de burbujeo y captura.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="eventos">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[2] dom y eventos</a>
+      <span class="sep">/</span>
+      <span class="current">eventos</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[20]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Eventos</h1>
+      <p class="topic-header__lede">La Web es interactiva porque los elementos pueden escuchar lo que el usuario hace: clicks, teclas, envíos de formularios… Los eventos son el puente entre la acción del usuario y la lógica de JavaScript.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>addEventListener</h2>
+      <p>La forma estándar de suscribirse a un evento es con <code>addEventListener</code>. Recibe el tipo de evento, una función callback y opcionalmente un objeto de configuración (como <code>once</code> o <code>capture</code>).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>add-event-listener.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const btn = document.querySelector('#miBoton');
+
+btn.addEventListener('click', function () {
+  console.log('¡Click!');
+});
+
+// Con arrow function
+btn.addEventListener('click', () => console.log('Click!'));
+
+// Opción once: se ejecuta una sola vez y se auto-remueve
+btn.addEventListener('click', handler, { once: true });</code></pre>
+      </div>
+
+      <h2>removeEventListener</h2>
+      <p>Para desuscribirte necesitas la <strong>misma referencia</strong> de función que usaste al suscribirte. Por eso no funcionan las funciones anónimas si después quieres removerlas.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>remove-event-listener.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function handleClick() {
+  console.log('Click');
+}
+
+btn.addEventListener('click', handleClick);
+btn.removeEventListener('click', handleClick); // ✅ funciona
+
+// ❌ No funciona: son funciones distintas
+btn.addEventListener('click', () => {});
+btn.removeEventListener('click', () => {});</code></pre>
+      </div>
+
+      <h2>El objeto event</h2>
+      <p>Cuando el callback se ejecuta recibe un objeto <code>event</code> con información sobre lo que ocurrió. Las propiedades más útiles son <code>target</code>, <code>currentTarget</code>, <code>type</code> y métodos como <code>preventDefault</code> y <code>stopPropagation</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>objeto-event.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">document.querySelector('a').addEventListener('click', e => {
+  e.preventDefault(); // evita la navegación
+  console.log(e.type);       // "click"
+  console.log(e.target);     // elemento que disparó el evento
+  console.log(e.currentTarget); // elemento donde está el listener
+});</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong><code>stopPropagation</code> con cuidado.</strong> Llamar a <code>e.stopPropagation()</code> detiene el burbujeo, pero también puede romper patrones como la delegación de eventos. Úsalo solo cuando realmente necesites aislar un elemento del árbol de eventos.</p>
+      </div>
+
+      <h2>Tipos de eventos comunes</h2>
+
+      <h3>Mouse</h3>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>eventos-mouse.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">elemento.addEventListener('click', handler);
+elemento.addEventListener('dblclick', handler);
+elemento.addEventListener('mouseenter', handler);
+elemento.addEventListener('mouseleave', handler);
+elemento.addEventListener('mousemove', handler);</code></pre>
+      </div>
+
+      <h3>Teclado</h3>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>eventos-teclado.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">document.addEventListener('keydown', e => {
+  console.log(e.key);    // "Enter", "a", "Escape"…
+  console.log(e.code);   // "Enter", "KeyA", "Escape"…
+  console.log(e.ctrlKey); // true si Ctrl está presionado
+});
+
+document.addEventListener('keyup', handler);</code></pre>
+      </div>
+
+      <h3>Formularios</h3>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>eventos-formulario.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">form.addEventListener('submit', handler);
+input.addEventListener('focus', handler);
+input.addEventListener('blur', handler);
+input.addEventListener('input', handler); // cada vez que cambia el valor
+input.addEventListener('change', handler); // cuando pierde el foco si cambió</code></pre>
+      </div>
+
+      <h2>Burbujeo y captura</h2>
+      <p>Cuando disparas un evento en un elemento, este no se queda ahí. Primero recorre el árbol desde la raíz hasta el elemento (fase de <strong>captura</strong>), luego desde el elemento hasta la raíz (fase de <strong>burbujeo</strong>). Por defecto los listeners escuchan en fase de burbujeo.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>burbujeo.html</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-html">&lt;div id="padre"&gt;
+  &lt;button id="hijo"&gt;Haz clic&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>burbujeo.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">document.querySelector('#padre').addEventListener('click', () => {
+  console.log('padre (burbujeo)');
+});
+
+document.querySelector('#hijo').addEventListener('click', e => {
+  console.log('hijo');
+  // e.stopPropagation(); // descomenta para evitar que llegue al padre
+});
+
+// Para escuchar en captura, pasa { capture: true }
+document.querySelector('#padre').addEventListener('click', () => {
+  console.log('padre (captura)');
+}, { capture: true });</code></pre>
+      </div>
+
+      <p>Entender el flujo de eventos es clave para dominar la delegación, que veremos a continuación.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="manipulacion-del-dom.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Manipulación del DOM</span>
+      </a>
+      <a class="topic-pager__link next" href="delegacion-de-eventos.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Delegación de eventos</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

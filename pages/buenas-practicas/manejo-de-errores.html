@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manejo de errores — JS Master</title>
+<meta name="description" content="try/catch/finally, throw, errores personalizados y patrones de manejo de errores.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="manejo-de-errores">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[6] buenas prácticas y herramientas</a>
+      <span class="sep">/</span>
+      <span class="current">manejo de errores</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[42]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1>Manejo de errores</h1>
+      <p class="topic-header__lede">El código falla. Lo que diferencia a un programa robusto de uno frágil no es que no tenga errores, sino cómo los maneja cuando aparecen.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>try / catch / finally</h2>
+      <p>La estructura base del manejo de errores en JavaScript. El bloque <code>try</code> ejecuta código que puede fallar; si ocurre una excepción, el control pasa al <code>catch</code>. El bloque <code>finally</code> se ejecuta siempre, haya o no error.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>try-catch-finally.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">try {
+  const data = JSON.parse('{ json inválido');
+  console.log(data);
+} catch (error) {
+  console.error('Error al parsear:', error.message);
+} finally {
+  console.log('Esto se ejecuta siempre');
+}</code></pre>
+      </div>
+
+      <p>El parámetro del <code>catch</code> es el objeto error. Aunque tradicionalmente se llamaba <code>err</code> o <code>error</code>, desde ES10 puedes omitir los paréntesis si no lo necesitas: <code>catch { ... }</code>. Úsalo con cuidado, porque silenciar errores sin mirarlos es una de las peores prácticas.</p>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>No tragues errores:</strong> un <code>catch</code> vacío (<code>catch {}</code>) oculta el problema y hace que el fallo se manifieste en otro lugar, mucho más difícil de rastrear. Como mínimo, haz un <code>console.error</code> o relanza el error.</p>
+      </div>
+
+      <h2>throw y la clase Error</h2>
+      <p>Puedes lanzar tus propios errores con <code>throw</code>. Casi siempre conviene lanzar una instancia de <code>Error</code> (o una subclase), porque incluye el <em>stack trace</em> que te dice exactamente dónde ocurrió el problema.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>throw-error.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function dividir(a, b) {
+  if (b === 0) {
+    throw new Error('División por cero');
+  }
+  return a / b;
+}
+
+try {
+  console.log(dividir(10, 0));
+} catch (err) {
+  console.error(err.message); // "División por cero"
+  console.error(err.stack);   // traza completa
+}</code></pre>
+      </div>
+
+      <h2>Errores personalizados</h2>
+      <p>Para modelar distintos tipos de error, extiende la clase <code>Error</code>. Así puedes distinguirlos en el catch y responder de forma distinta según el tipo.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>ApiError.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">class ApiError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.name = 'ApiError';
+    this.statusCode = statusCode;
+  }
+}
+
+async function obtenerUsuario(id) {
+  const res = await fetch(`/api/usuarios/${id}`);
+  if (!res.ok) {
+    throw new ApiError('Usuario no encontrado', res.status);
+  }
+  return res.json();
+}
+
+try {
+  const usuario = await obtenerUsuario(999);
+} catch (err) {
+  if (err instanceof ApiError) {
+    console.error(`API error ${err.statusCode}: ${err.message}`);
+  } else {
+    console.error('Error inesperado:', err);
+  }
+}</code></pre>
+      </div>
+
+      <h2>Error.cause</h2>
+      <p>Desde ES2022 puedes encadenar errores con la propiedad <code>cause</code>. Es útil cuando atrapas un error de bajo nivel y quieres lanzar uno de más alto nivel sin perder la información original.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>error-cause.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">try {
+  await fetch(url);
+} catch (err) {
+  throw new Error('No se pudo conectar con el servidor', { cause: err });
+}</code></pre>
+      </div>
+
+      <h2>Patrones de manejo</h2>
+      <p>Más allá de la sintaxis, el manejo de errores tiene patrones que marcan la diferencia en producción:</p>
+      <ul>
+        <li><strong>No tragar errores:</strong> siempre loguea o relanza.</li>
+        <li><strong>Fallback:</strong> si una API externa falla, intenta con un caché o un valor por defecto.</li>
+        <li><strong>Barrera de errores:</strong> en el punto de entrada (event listener, handler HTTP), atrapa todo para que no se propague sin control.</li>
+        <li><strong>Errores como datos:</strong> en lugar de lanzar, devuelve un objeto <code>{ error, data }</code> — común en Go, cada vez más visto en JS funcional.</li>
+      </ul>
+
+      <p>Dominar el manejo de errores te prepara para escribir código que no solo funciona cuando todo va bien, sino que se recupera con elegancia cuando algo sale mal. El siguiente tema lo complementa con tests que verifican que esos escenarios funcionan.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="eslint-prettier.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">ESLint y Prettier</span>
+      </a>
+      <a class="topic-pager__link next" href="testing-basico.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Testing básico</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

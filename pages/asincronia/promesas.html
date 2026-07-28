@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promesas — JS Master</title>
+<meta name="description" content="Qué es una Promise en JavaScript, sus estados, y cómo encadenar then/catch/finally o combinarlas con Promise.all.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="promesas">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[4] asincronía</a>
+      <span class="sep">/</span>
+      <span class="current">promesas</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[31]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Promesas</h1>
+      <p class="topic-header__lede">Una <code>Promise</code> es un objeto que representa un valor que todavía no existe, pero que existirá (o fallará) en el futuro. Son la base sobre la que se construye <code>async/await</code>, así que entenderlas bien te ahorra confusión más adelante.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Los tres estados de una promesa</h2>
+      <p>Toda <code>Promise</code> nace en estado <strong>pending</strong> (pendiente) y termina en uno de estos dos:</p>
+      <ul>
+        <li><strong>fulfilled</strong> — se resolvió con éxito, tiene un valor</li>
+        <li><strong>rejected</strong> — falló, tiene un motivo de error</li>
+      </ul>
+      <p>Una vez que pasa a fulfilled o rejected, ya no cambia — se dice que está <em>settled</em> (resuelta, en cualquiera de los dos sentidos).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>crear-promesa.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const promesa = new Promise((resolve, reject) => {
+  const exito = true;
+
+  setTimeout(() => {
+    if (exito) {
+      resolve("¡Datos listos!");
+    } else {
+      reject(new Error("Algo salió mal"));
+    }
+  }, 1000);
+});</code></pre>
+      </div>
+
+      <h2>Consumir una promesa: then / catch / finally</h2>
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>consumir.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">promesa
+  .then(resultado => console.log(resultado))   // se ejecuta si se resuelve
+  .catch(error => console.error(error.message)) // se ejecuta si falla
+  .finally(() => console.log("Terminado, haya fallado o no"));</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p>Cada <code>.then()</code> devuelve una nueva promesa, por eso se pueden <strong>encadenar</strong>: el valor que retornas dentro de un <code>.then()</code> se convierte en el valor que recibe el siguiente.</p>
+      </div>
+
+      <h2>Combinar varias promesas</h2>
+      <p>Cuando necesitas esperar a varias operaciones asíncronas a la vez, no las encadenes una por una — usa los métodos estáticos de <code>Promise</code>:</p>
+
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Método</th><th>Se resuelve cuando…</th><th>Falla si…</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>Promise.all()</code></td><td>todas se resuelven</td><td>una sola falla, corta todo</td></tr>
+            <tr><td><code>Promise.allSettled()</code></td><td>todas terminan (éxito o error)</td><td>nunca falla, devuelve el detalle de cada una</td></tr>
+            <tr><td><code>Promise.race()</code></td><td>la primera en resolverse o fallar</td><td>si esa primera fue un error</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>promise-all.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const usuarios = fetch("/api/usuarios");
+const productos = fetch("/api/productos");
+
+Promise.all([usuarios, productos])
+  .then(([resUsuarios, resProductos]) => {
+    console.log("Ambas respuestas llegaron");
+  })
+  .catch(error => console.error("Alguna falló:", error));</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p>Una promesa rechazada sin un <code>.catch()</code> que la maneje genera un <em>unhandled promise rejection</em> — en el navegador aparece como advertencia en consola, y en Node.js puede incluso terminar el proceso.</p>
+      </div>
+
+      <h2>Lo que viene</h2>
+      <p>En el siguiente tema vas a ver <code>async/await</code>, una forma de escribir código asíncrono que se lee como si fuera síncrono — pero que por dentro sigue usando promesas exactamente como las que viste acá.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="callbacks.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Callbacks y "callback hell"</span>
+      </a>
+      <a class="topic-pager__link next" href="async-await.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">async / await</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

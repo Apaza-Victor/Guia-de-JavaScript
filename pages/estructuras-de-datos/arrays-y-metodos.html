@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arrays y métodos — JS Master</title>
+<meta name="description" content="Métodos de arrays en JavaScript: map, filter, reduce, forEach, find, sort, some, every con ejemplos.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="arrays-y-metodos">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[1] estructuras de datos</a>
+      <span class="sep">/</span>
+      <span class="current">arrays y métodos</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[11]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 9 min de lectura</span>
+      </div>
+      <h1>Arrays y métodos: <code>map</code>, <code>filter</code>, <code>reduce</code>, <code>forEach</code>, <code>find</code>, <code>sort</code></h1>
+      <p class="topic-header__lede">Los arrays son la estructura de datos más usada en JavaScript. Saber transformarlos con los métodos adecuados marca la diferencia entre código declarativo legible y bucles manuales difíciles de mantener.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Crear arrays</h2>
+      <p>Un array en JavaScript es una lista ordenada de elementos. Puedes crearlo con la sintaxis literal —la recomendada— o con el constructor <code>new Array()</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>crear-arrays.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Literal (recomendado)
+const frutas = ["manzana", "plátano", "naranja"];
+
+// Constructor (evitar)
+const numeros = new Array(1, 2, 3);
+
+const vacio = [];
+console.log(vacio.length); // 0</code></pre>
+      </div>
+
+      <h2>Métodos mutables (modifican el array original)</h2>
+      <p>Estos métodos alteran el array sobre el que se invocan. Son útiles para operaciones rápidas, pero pueden generar efectos secundarios si no se tiene cuidado.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>mutables.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const arr = [1, 2, 3];
+
+arr.push(4);     // [1, 2, 3, 4]  — añade al final
+arr.pop();        // [1, 2, 3]     — elimina el último
+arr.shift();      // [2, 3]        — elimina el primero
+arr.unshift(0);   // [0, 2, 3]     — añade al inicio
+arr.splice(1, 1); // [0, 3]        — elimina 1 elemento en índice 1</code></pre>
+      </div>
+
+      <h2>Métodos inmutables (devuelven un nuevo array)</h2>
+      <p>Estos métodos no modifican el array original, sino que devuelven uno nuevo. Son la base del estilo declarativo y funcional en JavaScript.</p>
+
+      <h3><code>forEach</code></h3>
+      <p>Itera sobre cada elemento. No devuelve nada, solo ejecuta un efecto secundario.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>forEach.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const numeros = [1, 2, 3];
+numeros.forEach(n => console.log(n * 2));
+// 2, 4, 6</code></pre>
+      </div>
+
+      <h3><code>map</code></h3>
+      <p>Transforma cada elemento y devuelve un array del mismo tamaño.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>map.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const dobles = [1, 2, 3].map(n => n * 2);
+console.log(dobles); // [2, 4, 6]</code></pre>
+      </div>
+
+      <h3><code>filter</code></h3>
+      <p>Filtra elementos según una condición. Devuelve un array con los que la cumplen.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>filter.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const pares = [1, 2, 3, 4, 5].filter(n => n % 2 === 0);
+console.log(pares); // [2, 4]</code></pre>
+      </div>
+
+      <h3><code>reduce</code></h3>
+      <p>Acumula los elementos en un solo valor. Es el más potente y el que más cuesta al principio.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>reduce.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const suma = [1, 2, 3, 4].reduce((acc, n) => acc + n, 0);
+console.log(suma); // 10</code></pre>
+      </div>
+
+      <h3><code>find</code></h3>
+      <p>Devuelve el primer elemento que cumple la condición, o <code>undefined</code> si ninguno la cumple.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>find.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const primerMayor = [1, 4, 2, 7].find(n => n > 5);
+console.log(primerMayor); // 7</code></pre>
+      </div>
+
+      <h3><code>some</code> y <code>every</code></h3>
+      <p><code>some</code> comprueba si al menos un elemento cumple la condición. <code>every</code> comprueba si todos la cumplen.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>some-every.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const nums = [1, 2, 3, 4];
+console.log(nums.some(n => n > 3));  // true
+console.log(nums.every(n => n > 0)); // true
+console.log(nums.every(n => n > 2)); // false</code></pre>
+      </div>
+
+      <h3><code>sort</code></h3>
+      <p>Ordena el array. <strong>Atención:</strong> por defecto convierte a string y ordena alfabéticamente. Siempre pasa una función comparadora.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>sort.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const nums = [3, 20, 1];
+nums.sort();               // [1, 20, 3] — orden alfabético 😱
+nums.sort((a, b) => a - b); // [1, 3, 20] — numérico ascendente</code></pre>
+      </div>
+
+      <h2>Spread con arrays</h2>
+      <p>El operador <code>...</code> permite expandir los elementos de un array en lugares donde se esperan múltiples valores.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>spread-array.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const a = [1, 2, 3];
+const b = [4, 5, 6];
+const combinado = [...a, ...b]; // [1, 2, 3, 4, 5, 6]
+
+const clon = [...a]; // copia superficial</code></pre>
+      </div>
+
+      <h2>Comparación de métodos</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Método</th><th>Devuelve</th><th>Mutable</th><th>Uso típico</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>push/pop/shift/unshift</code></td><td>número / elemento</td><td>sí</td><td>pila / cola</td></tr>
+            <tr><td><code>forEach</code></td><td><code>undefined</code></td><td>no</td><td>efectos secundarios</td></tr>
+            <tr><td><code>map</code></td><td>nuevo array (misma longitud)</td><td>no</td><td>transformar datos</td></tr>
+            <tr><td><code>filter</code></td><td>nuevo array (menor longitud)</td><td>no</td><td>filtrar datos</td></tr>
+            <tr><td><code>reduce</code></td><td>valor único</td><td>no</td><td>acumular / resumir</td></tr>
+            <tr><td><code>find</code></td><td>elemento o <code>undefined</code></td><td>no</td><td>buscar uno</td></tr>
+            <tr><td><code>some / every</code></td><td><code>boolean</code></td><td>no</td><td>comprobar condición</td></tr>
+            <tr><td><code>sort</code></td><td>el mismo array ordenado</td><td>sí</td><td>ordenar</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p>Prefiere métodos inmutables siempre que puedas: el código es más predecible y fácil de depurar. Reserva <code>push</code> y <code>splice</code> para cuando trabajes con arrays muy grandes y necesites rendimiento.</p>
+      </div>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="../fundamentos/scope-y-hoisting.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Scope y Hoisting</span>
+      </a>
+      <a class="topic-pager__link next" href="objetos-literales.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Objetos literales</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

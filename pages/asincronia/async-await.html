@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>async / await — JS Master</title>
+<meta name="description" content="Funciones asíncronas con async/await: escribir código asíncrono que se lee como síncrono.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="async-await">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[4] asincronía</a>
+      <span class="sep">/</span>
+      <span class="current">async / await</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[32]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1><code>async</code> / <code>await</code></h1>
+      <p class="topic-header__lede"><code>async/await</code> es azúcar sintáctica sobre las promesas: te permite escribir código asíncrono con la misma estructura plana que el código síncrono, sin <code>.then()</code> encadenados ni callbacks anidados.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>async function</h2>
+      <p>Declarar una función con <code>async</code> hace que automáticamente devuelva una promesa. Todo lo que retornes con <code>return</code> se envuelve en <code>Promise.resolve()</code>, y cualquier error que lances con <code>throw</code> se convierte en <code>Promise.reject()</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>async-function.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">async function obtenerSaludo() {
+  return "Hola";
+}
+
+obtenerSaludo().then(console.log); // "Hola"
+
+async function lanzarError() {
+  throw new Error("Algo falló");
+}
+
+lanzarError().catch(console.error); // Error: Algo falló</code></pre>
+      </div>
+
+      <h2>await: esperar sin bloquear</h2>
+      <p><code>await</code> solo puede usarse dentro de una función <code>async</code>. Detiene la ejecución de esa función (sin bloquear el hilo principal) hasta que la promesa se resuelva o se rechace. El código se lee de arriba a abajo, como si fuera síncrono.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>await-ejemplo.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function esperar(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function main() {
+  console.log("Esperando…");
+  await esperar(2000);
+  console.log("Pasaron 2 segundos");
+}
+
+main();</code></pre>
+      </div>
+
+      <h2>try/catch con async/await</h2>
+      <p>A diferencia de <code>.catch()</code>, con <code>async/await</code> puedes usar el clásico <code>try/catch</code> para manejar errores, exactamente igual que en código síncrono.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>try-catch-async.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">async function obtenerUsuario(id) {
+  try {
+    const respuesta = await fetch(`/api/usuarios/${id}`);
+    if (!respuesta.ok) throw new Error("Error HTTP");
+    return await respuesta.json();
+  } catch (error) {
+    console.error("No se pudo obtener el usuario:", error.message);
+    return null;
+  }
+}</code></pre>
+      </div>
+
+      <h2>await Promise.all</h2>
+      <p>Cuando necesitas ejecutar varias promesas en paralelo, no las hagas una tras otra con <code>await</code> individual — usa <code>Promise.all</code> combinado con <code>await</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>await-promise-all.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">async function obtenerDashboard() {
+  const [usuarios, productos, pedidos] = await Promise.all([
+    fetch("/api/usuarios").then(r => r.json()),
+    fetch("/api/productos").then(r => r.json()),
+    fetch("/api/pedidos").then(r => r.json()),
+  ]);
+
+  return { usuarios, productos, pedidos };
+}</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>No hagas esto:</strong> <code>const a = await fetch(...); const b = await fetch(...);</code> — las promesas se ejecutan en serie y pierdes tiempo. Siempre que sean independientes, lánzalas juntas con <code>Promise.all</code>.</p>
+      </div>
+
+      <h2>Promesas vs async/await</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Caso</th><th>Promesas (.then)</th><th>async/await</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Lectura</td><td>vertical con anidamiento</td><td>plana, como síncrono</td></tr>
+            <tr><td>Errores</td><td>.catch()</td><td>try/catch</td></tr>
+            <tr><td>Paralelismo</td><td>Promise.all</td><td>await Promise.all</td></tr>
+            <tr><td>Depuración</td><td>stack trace confuso</td><td>stack trace claro</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Ambos enfoques son igual de válidos. <code>async/await</code> no reemplaza a las promesas: las usa por debajo. Elige el que te resulte más legible en cada contexto.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="promesas.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Promesas</span>
+      </a>
+      <a class="topic-pager__link next" href="fetch-api.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">fetch API</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

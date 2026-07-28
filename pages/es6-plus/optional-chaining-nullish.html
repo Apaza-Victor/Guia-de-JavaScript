@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Optional chaining y Nullish — JS Master</title>
+<meta name="description" content="Optional chaining (?.) y Nullish coalescing (??): acceder propiedades y asignar por defecto sin errores.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="optional-chaining-nullish">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[5] javascript moderno (es6+)</a>
+      <span class="sep">/</span>
+      <span class="current">optional chaining y nullish</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[36]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 5 min de lectura</span>
+      </div>
+      <h1>Optional chaining (<code>?.</code>) y Nullish coalescing (<code>??</code>)</h1>
+      <p class="topic-header__lede">Dos operadores modernos que trabajan juntos para acceder propiedades profundas y asignar valores por defecto de forma segura, eliminando los tediosos <code>&amp;&amp;</code> encadenados y las confusiones con valores <em>falsy</em>.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Optional chaining — <code>?.</code></h2>
+      <p>El optional chaining permite leer propiedades encadenadas sin verificar manualmente que cada nivel exista. Si en cualquier punto de la cadena el valor es <code>null</code> o <code>undefined</code>, la expresión cortocircuita y devuelve <code>undefined</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>optional-chaining.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const usuario = {
+  perfil: {
+    nombre: 'Ana'
+  }
+};
+
+// Sin optional chaining — tedioso y verboso
+const ciudad = usuario.direccion && usuario.direccion.ciudad;
+
+// Con optional chaining — limpio y seguro
+const ciudad2 = usuario.direccion?.ciudad;
+console.log(ciudad2); // undefined</code></pre>
+      </div>
+
+      <p>El operador también funciona para llamar métodos que pueden no existir y para acceder a índices de arrays de forma segura.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>metodos-y-arrays.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Método opcional
+const resultado = usuario.saludar?.(); // undefined si no existe
+
+// Índice opcional
+const items = null;
+console.log(items?.[0]); // undefined</code></pre>
+      </div>
+
+      <h2>Nullish coalescing — <code>??</code></h2>
+      <p>El operador <code>??</code> devuelve el operando del lado derecho solo cuando el izquierdo es <code>null</code> o <code>undefined</code>. A diferencia de <code>||</code>, no trata otros valores <em>falsy</em> como <code>0</code>, <code>""</code> (cadena vacía) o <code>false</code> como "ausencia de valor".</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>nullish-vs-or.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const puntuacion = 0;
+const nombre = '';
+
+console.log(puntuacion || 100);  // 100  ← 0 es falsy, lo reemplaza
+console.log(puntuacion ?? 100);  // 0    ← 0 no es null/undefined
+
+console.log(nombre || 'Invitado'); // 'Invitado' ← "" es falsy
+console.log(nombre ?? 'Invitado'); // ''          ← "" no es null/undefined</code></pre>
+      </div>
+
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Operador</th><th>Reacciona ante</th><th>Ejemplo con <code>0</code></th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>||</code> (OR lógico)</td><td>cualquier falsy (<code>0</code>, <code>""</code>, <code>false</code>, <code>null</code>, <code>undefined</code>, <code>NaN</code>)</td><td><code>0 || 100 → 100</code></td></tr>
+            <tr><td><code>??</code> (Nullish)</td><td>solo <code>null</code> / <code>undefined</code></td><td><code>0 ?? 100 → 0</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>No mezcles <code>??</code> con <code>||</code> ni <code>&amp;&amp;</code> sin paréntesis explícitos.</strong> JavaScript lo prohíbe por ambigüedad. Si necesitas combinarlos, usa paréntesis: <code>(a ?? b) || c</code>.</p>
+      </div>
+
+      <h2>Trabajando juntos</h2>
+      <p>El patrón más potente es combinar ambos operadores: accede a una propiedad profunda con <code>?.</code> y proporciona un valor por defecto con <code>??</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>combinacion.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">function obtenerPais(usuario) {
+  return usuario?.direccion?.pais ?? 'Desconocido';
+}
+
+console.log(obtenerPais({ direccion: { pais: 'Chile' } })); // 'Chile'
+console.log(obtenerPais({}));                                // 'Desconocido'</code></pre>
+      </div>
+
+      <p>Este patrón es especialmente útil al trabajar con datos de API donde la estructura puede ser impredecible o cuando encadenas accesos a objetos que pueden no estar inicializados.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="modulos.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Módulos import / export</span>
+      </a>
+      <a class="topic-pager__link next" href="generadores-iteradores.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Generadores e iteradores</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

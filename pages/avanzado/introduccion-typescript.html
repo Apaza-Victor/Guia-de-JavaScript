@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Introducción a TypeScript — JS Master</title>
+<meta name="description" content="TypeScript: tipos básicos, interfaces, tipos genéricos y cómo se relaciona con JavaScript.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="introduccion-typescript">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[7] avanzado / rumbo a experto</a>
+      <span class="sep">/</span>
+      <span class="current">introducción a TypeScript</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[53]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Introducción a TypeScript</h1>
+      <p class="topic-header__lede">TypeScript es JavaScript con tipos. No reemplaza a JS — lo extiende añadiendo un sistema de tipos estático que detecta errores en tiempo de compilación, antes de que lleguen a producción.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>TypeScript como superset de JS</h2>
+      <p>Todo código JavaScript válido es también TypeScript válido. La diferencia es que TS añade sintaxis para declarar tipos que luego el compilador (<code>tsc</code>) elimina, generando JS limpio. Esto significa que puedes adoptarlo de forma gradual, archivo por archivo.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>hola-typescript.ts</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-typescript">function saludar(nombre: string): string {
+  return `Hola, ${nombre}`;
+}
+
+const mensaje = saludar('Ana');
+console.log(mensaje);</code></pre>
+      </div>
+
+      <h2>Tipos básicos</h2>
+      <p>TypeScript ofrece los mismos tipos que JavaScript, pero puedes declararlos explícitamente para que el compilador verifique su uso.</p>
+
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>JS</th><th>TS</th><th>Ejemplo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>let n = 42</code></td><td><code>let n: number = 42</code></td><td><code>number</code></td></tr>
+            <tr><td><code>let s = "hola"</code></td><td><code>let s: string = "hola"</code></td><td><code>string</code></td></tr>
+            <tr><td><code>let ok = true</code></td><td><code>let ok: boolean = true</code></td><td><code>boolean</code></td></tr>
+            <tr><td><code>let arr = [1,2]</code></td><td><code>let arr: number[] = [1,2]</code></td><td><code>Array&lt;number&gt;</code></td></tr>
+            <tr><td><code>let obj = {a:1}</code></td><td><code>let obj: {a: number} = {a:1}</code></td><td><code>object</code></td></tr>
+            <tr><td><code>let x = null</code></td><td><code>let x: null = null</code></td><td><code>null / undefined</code></td></tr>
+            <tr><td><code>let valor = cualquier_cosa</code></td><td><code>let valor: any = cualquier_cosa</code></td><td><code>any</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Interfaces y type alias</h2>
+      <p>Las interfaces definen la forma de un objeto. Los type alias son más flexibles y pueden representar uniones, tuplas y tipos primitivos.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>interfaces.ts</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-typescript">interface Usuario {
+  id: number;
+  nombre: string;
+  email?: string; // opcional
+}
+
+type Resultado = 'éxito' | 'error' | 'pendiente';
+
+function procesar(u: Usuario): Resultado {
+  if (u.id > 0) return 'éxito';
+  return 'error';
+}</code></pre>
+      </div>
+
+      <h2>Genéricos básicos</h2>
+      <p>Los genéricos permiten crear funciones y tipos que funcionan con cualquier tipo, manteniendo la seguridad de tipos.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>genericos.ts</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-typescript">function identidad&lt;T&gt;(valor: T): T {
+  return valor;
+}
+
+const num = identidad(42);    // tipo inferido: number
+const txt = identidad('hola'); // tipo inferido: string</code></pre>
+      </div>
+
+      <h2>Configuración con tsconfig.json</h2>
+      <p>El archivo <code>tsconfig.json</code> centraliza las opciones del compilador: versión de JS de salida, directorios de entrada/salida y nivel de estrictitud.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>tsconfig.json</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-json">{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "strict": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  }
+}</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Preferí <code>unknown</code> sobre <code>any</code>.</strong> <code>any</code> desactiva completamente el sistema de tipos. <code>unknown</code> fuerza a que verifiques el tipo antes de usarlo, manteniendo la seguridad sin perder flexibilidad.</p>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="web-components.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Web Components</span>
+      </a>
+      <a class="topic-pager__link next" href="bundlers-y-npm.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Bundlers modernos y npm</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

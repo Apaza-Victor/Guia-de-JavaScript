@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estructuras condicionales — JS Master</title>
+<meta name="description" content="if, else if, else, switch y ternario: cómo tomar decisiones en JavaScript.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="condicionales">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[0] fundamentos</a>
+      <span class="sep">/</span>
+      <span class="current">condicionales</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[7]</b></span>
+        <span class="badge badge--basico">básico</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 6 min de lectura</span>
+      </div>
+      <h1>Estructuras condicionales: <code>if</code>, <code>else</code>, <code>switch</code> y ternario</h1>
+      <p class="topic-header__lede">Tu programa necesita tomar decisiones: si el usuario está logueado, muéstrale el panel; si no, la pantalla de login. Las condicionales son las herramientas que hacen posible esa bifurcación.</p>
+    </header>
+
+    <article class="article-content">
+      <h2><code>if</code> / <code>else</code></h2>
+      <p>La estructura más básica. Evalúa una condición y ejecuta un bloque si es <em>truthy</em>. Opcionalmente, el <code>else</code> ejecuta otro bloque cuando la condición es <em>falsy</em>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>if-else.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let edad = 18;
+
+if (edad >= 18) {
+  console.log("Puedes votar");
+} else {
+  console.log("Aún no puedes votar");
+}
+// "Puedes votar"</code></pre>
+      </div>
+
+      <h2><code>else if</code></h2>
+      <p>Cuando tienes más de dos caminos posibles, encadenas condiciones con <code>else if</code>. El orden importa: JS evalúa de arriba abajo y se detiene en la primera condición que dé <code>true</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>else-if.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let nota = 85;
+
+if (nota >= 90) {
+  console.log("Excelente");
+} else if (nota >= 70) {
+  console.log("Aprobado");
+} else {
+  console.log("Reprobado");
+}
+// "Aprobado"</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Truthy y falsy:</strong> en JavaScript, los valores <code>false</code>, <code>0</code>, <code>""</code> (string vacío), <code>null</code>, <code>undefined</code> y <code>NaN</code> son <em>falsy</em>; todo lo demás es <em>truthy</em>. Esto afecta a todas las condicionales.</p>
+      </div>
+
+      <h2><code>switch</code></h2>
+      <p>Útil cuando comparas una misma expresión contra muchos valores posibles. Cada <code>case</code> ejecuta código si hay coincidencia, y el <code>break</code> evita que se siga evaluando el siguiente caso (<em>fall-through</em>).</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>switch.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let dia = 3;
+let nombre;
+
+switch (dia) {
+  case 1:
+    nombre = "Lunes";
+    break;
+  case 2:
+    nombre = "Martes";
+    break;
+  case 3:
+    nombre = "Miércoles";
+    break;
+  default:
+    nombre = "Día inválido";
+}
+
+console.log(nombre); // "Miércoles"</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>No olvides el <code>break</code>:</strong> sin él, el flujo continúa al siguiente caso aunque no coincida (<em>fall-through</em>). A veces se usa a propósito, pero la mayoría de las veces es un bug.</p>
+      </div>
+
+      <h2>Operador ternario</h2>
+      <p>Una alternativa compacta para <code>if/else</code> simple. No es un reemplazo general, pero cuando la lógica es breve mejora la legibilidad.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>ternario-condicional.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">let temperatura = 30;
+let sensacion = temperatura > 25 ? "Hace calor" : "Está fresco";
+console.log(sensacion); // "Hace calor"
+
+// Equivalente con if/else:
+let sensacion2;
+if (temperatura > 25) {
+  sensacion2 = "Hace calor";
+} else {
+  sensacion2 = "Está fresco";
+}</code></pre>
+      </div>
+
+      <h2>Cuándo usar cada una</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Estructura</th><th>Cuándo usarla</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>if / else</code></td><td>Decisiones binarias o con pocas ramas</td></tr>
+            <tr><td><code>else if</code></td><td>Tres o más caminos con condiciones distintas</td></tr>
+            <tr><td><code>switch</code></td><td>Muchos valores posibles para una misma expresión</td></tr>
+            <tr><td>ternario</td><td>Asignación rápida con dos opciones</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="coercion-de-tipos.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Coerción de tipos</span>
+      </a>
+      <a class="topic-pager__link next" href="bucles.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Bucles</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

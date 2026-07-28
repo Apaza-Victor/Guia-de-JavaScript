@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Programación funcional — JS Master</title>
+<meta name="description" content="Funciones puras, inmutabilidad, composición, currying y high-order functions en JS.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="programacion-funcional">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[7] avanzado / rumbo a experto</a>
+      <span class="sep">/</span>
+      <span class="current">programación funcional</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[47]</b></span>
+        <span class="badge badge--avanzado">avanzado</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Programación funcional</h1>
+      <p class="topic-header__lede">La programación funcional no es una moda: es una forma de escribir código más predecible y testeable. JavaScript permite adoptar sus principios sin necesidad de un lenguaje funcional puro.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>Funciones puras</h2>
+      <p>Una función pura devuelve el mismo resultado para los mismos argumentos y no produce efectos secundarios (<em>side effects</em>). No modifica variables externas, no hace llamadas a APIs ni escribe en consola.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>pura-vs-impura.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">// Pura
+function suma(a, b) {
+  return a + b;
+}
+
+// Impura (modifica un estado externo)
+let total = 0;
+function agregarAlTotal(valor) {
+  total += valor;
+}</code></pre>
+      </div>
+
+      <h2>Inmutabilidad</h2>
+      <p>Trabajar con datos inmutables significa que nunca modificas un objeto o array existente: creas uno nuevo con los cambios aplicados. JavaScript no fuerza inmutabilidad, pero puedes practicarla con <code>Object.freeze</code>, spread operator y librerías como Immer.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>inmutabilidad.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const usuario = { nombre: 'Ana', edad: 30 };
+
+// Mutación (mal)
+usuario.edad = 31;
+
+// Inmutable (bien)
+const usuarioActualizado = { ...usuario, edad: 31 };
+
+console.log(usuario.edad);           // 30 (original intacto)
+console.log(usuarioActualizado.edad); // 31</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>Cuidado con la mutación accidental.</strong> Métodos como <code>Array.prototype.sort</code> mutan el array original. Haz una copia antes: <code>[...arr].sort()</code>.</p>
+      </div>
+
+      <h2>Composición de funciones</h2>
+      <p>Componer funciones es combinar funciones simples para crear operaciones más complejas. Cada función toma la salida de la anterior.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>composicion.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const doblar = n => n * 2;
+const sumarUno = n => n + 1;
+
+const componer = (f, g) => x => f(g(x));
+
+const doblarYSumar = componer(sumarUno, doblar);
+console.log(doblarYSumar(5)); // 11 (5*2=10, 10+1=11)</code></pre>
+      </div>
+
+      <h2>Currying</h2>
+      <p>El currying transforma una función de múltiples argumentos en una secuencia de funciones que toman un solo argumento cada una.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>currying.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const multiplicar = a => b => a * b;
+
+const porDos = multiplicar(2);
+console.log(porDos(5)); // 10
+console.log(multiplicar(3)(4)); // 12</code></pre>
+      </div>
+
+      <h2>High-order functions</h2>
+      <p>Una función de orden superior es cualquier función que recibe otra función como argumento o devuelve una función. <code>map</code>, <code>filter</code> y <code>reduce</code> son los ejemplos más conocidos.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>high-order.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const numeros = [1, 2, 3, 4];
+const pares = numeros.filter(n => n % 2 === 0);
+const cuadrados = numeros.map(n => n * n);
+const suma = numeros.reduce((acc, n) => acc + n, 0);
+
+console.log(pares);      // [2, 4]
+console.log(cuadrados);  // [1, 4, 9, 16]
+console.log(suma);       // 10</code></pre>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="patrones-de-diseno.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Patrones de diseño en JS</span>
+      </a>
+      <a class="topic-pager__link next" href="closures-avanzados.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Closures avanzados</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

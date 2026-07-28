@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Objetos y this — JS Master</title>
+<meta name="description" content="El valor de this en JavaScript según el contexto: global, objeto, función, evento y arrow functions.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="this">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <!-- ============ CONTENIDO ============ -->
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[3] programación orientada a objetos</a>
+      <span class="sep">/</span>
+      <span class="current">objetos y this</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[24]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 8 min de lectura</span>
+      </div>
+      <h1>Objetos y <code>this</code></h1>
+      <p class="topic-header__lede"><code>this</code> es una de las palabras más escurridizas de JavaScript. No se asigna en la declaración sino cuando se invoca, y su valor cambia según cómo y dónde se llame a la función. Entenderlo es entender el 90 % de los bugs con objetos.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>¿Qué es <code>this</code>?</h2>
+      <p><code>this</code> es una referencia al objeto que "ejecuta" la función actual. A diferencia de otros lenguajes donde apunta siempre a la instancia de una clase, en JS puede referirse a distintos objetos según el contexto de llamada.</p>
+
+      <h2><code>this</code> en contexto global</h2>
+      <p>En el ámbito global (fuera de cualquier función), <code>this</code> apunta al objeto global: <code>window</code> en navegadores, <code>global</code> en Node.js.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>global-this.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">console.log(this === window); // true (en el navegador)
+
+var color = "azul";
+console.log(window.color); // "azul"</code></pre>
+      </div>
+
+      <h2><code>this</code> en un método de objeto</h2>
+      <p>Cuando una función se llama como método de un objeto, <code>this</code> apunta a ese objeto. Es el caso más intuitivo y el que se parece a otros lenguajes.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>metodo-objeto.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const usuario = {
+  nombre: "María",
+  saludar() {
+    console.log(`Hola, soy ${this.nombre}`);
+  }
+};
+
+usuario.saludar(); // "Hola, soy María"</code></pre>
+      </div>
+
+      <h2><code>this</code> en función regular</h2>
+      <p>Si llamas a una función de manera suelta —sin que sea método de un objeto— <code>this</code> apunta al objeto global en modo no estricto, y es <code>undefined</code> en modo estricto.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>funcion-suelta.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">"use strict";
+
+function mostrarThis() {
+  console.log(this);
+}
+
+mostrarThis(); // undefined (modo estricto)</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p>Perder el contexto es el error más común con <code>this</code>. Pasa cuando extraes un método de su objeto y lo asignas a una variable: <code>const fn = usuario.saludar; fn();</code> — ahí <code>this</code> ya no es <code>usuario</code>.</p>
+      </div>
+
+      <h2><code>this</code> en arrow functions</h2>
+      <p>Las funciones flecha no tienen su propio <code>this</code>. En su lugar <strong>heredan</strong> el <code>this</code> del ámbito (scope) que las envuelve. Por eso son ideales para callbacks dentro de métodos.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>arrow-this.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const contador = {
+  items: [],
+  agregar(item) {
+    // this aquí es contador
+    setTimeout(() => {
+      // this aquí también es contador (heredado)
+      this.items.push(item);
+      console.log(this.items);
+    }, 100);
+  }
+};
+
+contador.agregar("🍎");</code></pre>
+      </div>
+
+      <div class="callout callout--tip">
+        <i class="bi bi-lightbulb"></i>
+        <p><strong>Regla de oro:</strong> usa <code>function</code> cuando quieras que <code>this</code> dependa de cómo se llama la función. Usa arrow function cuando quieras que <code>this</code> sea el del entorno que la rodea — por ejemplo, dentro de un método que tiene un callback.</p>
+      </div>
+
+      <h2><code>this</code> en event listeners</h2>
+      <p>En un event listener tradicional, <code>this</code> apunta al elemento que disparó el evento. Con arrow function se hereda el contexto exterior.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>event-this.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">boton.addEventListener("click", function () {
+  console.log(this); // el botón
+});
+
+boton.addEventListener("click", () => {
+  console.log(this); // window (o el contexto padre)
+});</code></pre>
+      </div>
+
+      <h2><code>bind</code>, <code>call</code> y <code>apply</code></h2>
+      <p>Estos tres métodos permiten <strong>forzar</strong> el valor de <code>this</code>. <code>bind</code> devuelve una nueva función con el contexto atado; <code>call</code> y <code>apply</code> invocan la función inmediatamente.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>bind-call-apply.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const persona = { nombre: "Luis" };
+
+function presentar(ciudad) {
+  console.log(`${this.nombre} vive en ${ciudad}`);
+}
+
+presentar.call(persona, "Madrid");   // "Luis vive en Madrid"
+presentar.apply(persona, ["Lima"]); // "Luis vive en Lima"
+
+const bound = presentar.bind(persona);
+bound("Bogotá"); // "Luis vive en Bogotá"</code></pre>
+      </div>
+
+      <h2>Comparación rápida</h2>
+      <div class="table-wrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Contexto</th><th>Valor de <code>this</code></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Global (fuera de función)</td><td><code>window</code> / <code>global</code></td></tr>
+            <tr><td>Método de objeto</td><td>El objeto propietario</td></tr>
+            <tr><td>Función regular (modo estricto)</td><td><code>undefined</code></td></tr>
+            <tr><td>Función regular (modo no estricto)</td><td><code>window</code> / <code>global</code></td></tr>
+            <tr><td>Arrow function</td><td>El <code>this</code> del ámbito padre</td></tr>
+            <tr><td>Event listener (function)</td><td>El elemento <code>target</code></td></tr>
+            <tr><td><code>bind</code> / <code>call</code> / <code>apply</code></td><td>El objeto que se pasa como argumento</td></tr>
+            <tr><td>Constructor (<code>new</code>)</td><td>La nueva instancia creada</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ============ PAGINADOR ============ -->
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="../dom-y-eventos/bom.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">BOM: window, location, history, navigator</span>
+      </a>
+      <a class="topic-pager__link next" href="prototipos.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">Prototipos y herencia prototípica</span>
+      </a>
+    </nav>
+  </main>
+
+  <!-- ============ TOC "EN ESTA PÁGINA" ============ -->
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

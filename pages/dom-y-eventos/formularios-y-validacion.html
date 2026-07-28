@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formularios y validación — JS Master</title>
+<meta name="description" content="Validación de formularios con JavaScript: submit, HTML5 validation API y feedback visual.">
+
+<script>
+  (function () {
+    var saved = localStorage.getItem('js-master-theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
+
+<link rel="stylesheet" href="../../assets/css/variables.css">
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/layout.css">
+<link rel="stylesheet" href="../../assets/css/components.css">
+<link rel="stylesheet" href="../../assets/css/docs.css">
+<link rel="stylesheet" href="../../assets/css/responsive.css">
+</head>
+<body data-base="../../" data-current-slug="formularios-y-validacion">
+
+<a href="#main" class="skip-link">Saltar al contenido</a>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menú" aria-expanded="false">
+      <i class="bi bi-list" style="font-size:1.3rem;"></i>
+    </button>
+
+    <a href="../../index.html" class="brand">
+      <span class="brand__mark">js</span>
+      <span>master<span class="brand__index">[]</span></span>
+    </a>
+
+    <div class="header-search">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      <kbd>/</kbd>
+    </div>
+
+    <nav class="header-nav" id="header-nav" aria-label="Navegación de niveles"></nav>
+
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema" aria-pressed="false">
+        <i class="bi bi-moon-stars-fill"></i>
+        <i class="bi bi-sun-fill"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="container docs-layout">
+
+  <aside class="sidebar" id="sidebar" aria-label="Navegación del temario">
+    <div class="sidebar__search">
+      <div class="header-search" style="display:flex;max-width:none;">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Buscar un tema…" aria-label="Buscar en la guía">
+      </div>
+    </div>
+    <nav id="sidebar-nav" aria-label="Temario"></nav>
+  </aside>
+
+  <main id="main">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="../../index.html">inicio</a>
+      <span class="sep">/</span>
+      <a href="../../index.html#niveles">nivel[2] dom y eventos</a>
+      <span class="sep">/</span>
+      <span class="current">formularios y validación</span>
+    </nav>
+
+    <header class="topic-header">
+      <div class="topic-header__meta">
+        <span class="index-chip">tema<b>[22]</b></span>
+        <span class="badge badge--intermedio">intermedio</span>
+        <span class="reading-time"><i class="bi bi-clock"></i> 7 min de lectura</span>
+      </div>
+      <h1>Formularios y validación</h1>
+      <p class="topic-header__lede">Los formularios son el canal principal entre el usuario y el servidor. JavaScript permite interceptar el envío, validar los datos antes de que salgan del navegador y dar feedback inmediato sin recargar la página.</p>
+    </header>
+
+    <article class="article-content">
+      <h2>El evento submit</h2>
+      <p>Cuando un usuario envía un formulario se dispara el evento <code>submit</code> en el elemento <code>&lt;form&gt;</code>. Para evitar que la página se recargue (el comportamiento por defecto), llamas a <code>e.preventDefault()</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>evento-submit.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const form = document.querySelector('#registro');
+
+form.addEventListener('submit', e => {
+  e.preventDefault(); // evita recargar la página
+
+  const data = new FormData(form);
+  console.log(Object.fromEntries(data)); // { nombre: "...", email: "..." }
+});</code></pre>
+      </div>
+
+      <h2>FormData</h2>
+      <p><code>FormData</code> es una API que captura todos los campos del formulario automáticamente. Puedes leer los valores con <code>get</code> o convertirlo a un objeto plano con <code>Object.fromEntries</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>formdata.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">form.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const fd = new FormData(form);
+
+  console.log(fd.get('nombre'));       // valor del input name="nombre"
+  console.log(fd.has('email'));        // true si el campo existe
+  console.log([...fd.entries()]);      // pares [nombre, valor]
+});</code></pre>
+      </div>
+
+      <h2>Validación HTML5 nativa</h2>
+      <p>HTML5 ofrece atributos de validación sin escribir JavaScript: <code>required</code>, <code>minlength</code>, <code>maxlength</code>, <code>min</code>, <code>max</code>, <code>pattern</code> y <code>type</code>. El navegador muestra mensajes por defecto y bloquea el envío si algo falla.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>validacion-html5.html</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-html">&lt;form&gt;
+  &lt;input type="email" name="email" required&gt;
+  &lt;input type="text" name="usuario" minlength="3" maxlength="20" required&gt;
+  &lt;input type="number" name="edad" min="18" max="120"&gt;
+  &lt;input type="text" name="codigo" pattern="[A-Z]{3}[0-9]{3}"&gt;
+  &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+      </div>
+
+      <h2>Constraint Validation API</h2>
+      <p>Para personalizar los mensajes de error o validar desde JavaScript usa la <em>Constraint Validation API</em>. Cada campo tiene propiedades como <code>validity</code>, <code>validationMessage</code> y el método <code>setCustomValidity</code>.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>constraint-validation.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">const email = form.querySelector('#email');
+
+email.addEventListener('blur', () => {
+  if (email.validity.valueMissing) {
+    email.setCustomValidity('El email es obligatorio');
+  } else if (email.validity.typeMismatch) {
+    email.setCustomValidity('Formato de email inválido');
+  } else {
+    email.setCustomValidity(''); // limpia el mensaje
+  }
+
+  console.log(email.validationMessage); // mensaje actual
+  console.log(email.validity.valid);    // true / false
+});</code></pre>
+      </div>
+
+      <p>Puedes consultar el objeto <code>validity</code> para detectar problemas específicos: <code>tooShort</code>, <code>patternMismatch</code>, <code>rangeOverflow</code>, etc.</p>
+
+      <h2>Validación manual</h2>
+      <p>A veces necesitas lógica que la validación HTML5 no cubre (comparar dos contraseñas, comprobar un formato personalizado, etc.). En ese caso recorres los campos y muestras errores manualmente.</p>
+
+      <div class="code-block">
+        <div class="code-block__head">
+          <span>validacion-manual.js</span>
+          <button class="code-block__copy"><i class="bi bi-clipboard"></i> copiar</button>
+        </div>
+        <pre><code class="language-javascript">form.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const pass = form.querySelector('#password').value;
+  const confirm = form.querySelector('#confirmar').value;
+
+  if (pass !== confirm) {
+    mostrarError('Las contraseñas no coinciden');
+    return;
+  }
+
+  enviarDatos(); // todo OK
+});
+
+function mostrarError(msg) {
+  const div = document.createElement('div');
+  div.textContent = msg;
+  div.className = 'error-msg';
+  form.prepend(div);
+}</code></pre>
+      </div>
+
+      <div class="callout callout--warn">
+        <i class="bi bi-exclamation-triangle"></i>
+        <p><strong>La validación del frontend es solo para UX.</strong> Nunca confíes solo en la validación del navegador. Un atacante puede enviar peticiones directamente a tu servidor sin pasar por el formulario. Siempre debes validar y sanitizar los datos también del lado del servidor.</p>
+      </div>
+
+      <p>Dominar formularios implica tanto la parte visual como la seguridad. En el siguiente tema subiremos un nivel para explorar el BOM: el navegador como objeto.</p>
+    </article>
+
+    <nav class="topic-pager" aria-label="Navegación entre temas">
+      <a class="topic-pager__link prev" href="delegacion-de-eventos.html">
+        <span class="topic-pager__label"><i class="bi bi-arrow-left"></i> anterior</span>
+        <span class="topic-pager__title">Delegación de eventos</span>
+      </a>
+      <a class="topic-pager__link next" href="bom.html">
+        <span class="topic-pager__label">siguiente <i class="bi bi-arrow-right"></i></span>
+        <span class="topic-pager__title">BOM: window, location, history, navigator</span>
+      </a>
+    </nav>
+  </main>
+
+  <aside class="toc" aria-label="En esta página">
+    <div class="toc__title">// en esta página</div>
+    <ul id="toc-list"></ul>
+  </aside>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div>
+      <div class="site-footer__brand">js master<span style="color:var(--ink-faint)">[]</span></div>
+      <div class="site-footer__meta">construido con HTML, CSS y JavaScript vanilla</div>
+    </div>
+    <nav class="site-footer__links" aria-label="Enlaces del pie de página">
+      <a href="../../index.html#niveles">Temario</a>
+      <a href="../../index.html#por-que">Sobre la guía</a>
+      <a href="#">GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="../../assets/js/theme.js"></script>
+<script src="../../assets/js/sidebar.js"></script>
+<script src="../../assets/js/toc.js"></script>
+<script src="../../assets/js/codeblock.js"></script>
+<script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

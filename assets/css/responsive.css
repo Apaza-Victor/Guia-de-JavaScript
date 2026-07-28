@@ -1,0 +1,82 @@
+/* =========================================================
+   responsive.css — Mobile-first, base = 368px en adelante
+   ========================================================= */
+
+/* ---------- Base (368px+) ---------- */
+.header-search { display: none; }
+.brand span:not(.brand__mark):not(.brand__index) { display: none; } /* oculta wordmark largo en muy angosto si aplica */
+
+.hero__grid { grid-template-columns: 1fr; }
+.hero__ctas .btn span.long { display: none; }
+
+.feature-grid { grid-template-columns: 1fr; }
+.level-grid { grid-template-columns: 1fr; }
+
+.site-footer__inner { text-align: left; }
+
+/* ---------- ≥480px ---------- */
+@media (min-width: 480px) {
+  .hero__ctas .btn span.long { display: inline; }
+  .hero__ctas .btn span.short { display: none; }
+}
+
+/* ---------- ≥576px ---------- */
+@media (min-width: 576px) {
+  .feature-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- ≥768px — tablets ---------- */
+@media (min-width: 768px) {
+  .header-search { display: flex; align-items: center; }
+  .menu-toggle { display: none; }
+
+  .level-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .site-footer__inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* ---------- ≥992px — laptops ---------- */
+@media (min-width: 992px) {
+  .hero__grid {
+    grid-template-columns: 1.05fr .95fr;
+    gap: 3.5rem;
+  }
+  .feature-grid { grid-template-columns: repeat(4, 1fr); }
+  .level-grid { grid-template-columns: repeat(3, 1fr); }
+  .section { padding-block: 5rem; }
+}
+
+/* ---------- ≥1200px — desktop ---------- */
+@media (min-width: 1200px) {
+  .level-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ---------- Sidebar off-canvas (páginas internas) ---------- */
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    inset: var(--header-h) 0 0 0;
+    transform: translateX(-100%);
+    transition: transform var(--speed-base) var(--ease);
+    z-index: 90;
+    overflow-y: auto;
+    background: var(--paper);
+  }
+  .sidebar.is-open { transform: translateX(0); }
+  .sidebar-overlay {
+    position: fixed;
+    inset: var(--header-h) 0 0 0;
+    background: rgba(0,0,0,.35);
+    z-index: 85;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--speed-base) var(--ease);
+  }
+  .sidebar-overlay.is-open { opacity: 1; pointer-events: auto; }
+}
+
+
